@@ -51,8 +51,6 @@ def genera_pdf(titolo, versi):
 st.markdown("<h1 class='poetic-title'>Poeticamente</h1>", unsafe_allow_html=True)
 
 conteggio_reale = conta_opere_demo()
-limite_max = 3
-rimanenti = max(0, limite_max - conteggio_reale)
 
 col_scrit, col_stat = st.columns([2, 1], gap="large")
 
@@ -63,28 +61,29 @@ with col_scrit:
 with col_stat:
     st.markdown("### 📜 Il tuo Registro")
     st.write(f"Opere pubblicate: **{conteggio_reale}**")
-    
-    if rimanenti > 0:
-        st.info(f"Puoi pubblicare ancora {rimanenti} opere gratuite.")
-    else:
-        st.warning("Atelier demo al completo.")
+    st.success("Atelier aperto a tutti. Pubblicazione libera e gratuita.")
 
     if st.button("🚀 PUBBLICA NELL'ALBO", use_container_width=True):
-        if rimanenti > 0:
-            if tit_inp and ver_inp:
-                if pubblica_opera(tit_inp, ver_inp):
-                    st.success("Opera salvata!")
-                    time.sleep(1)
-                    st.rerun()
+        if tit_inp and ver_inp:
+            if pubblica_opera(tit_inp, ver_inp):
+                st.success("Opera salvata nell'Albo Poetico!")
+                time.sleep(1)
+                st.rerun()
             else:
-                st.error("L'opera è incompleta.")
+                st.error("Errore durante il salvataggio.")
         else:
-            st.error("Limite raggiunto. Passa a Premium (20€/mese).")
+            st.error("L'opera è incompleta.")
 
     st.markdown("---")
     st.markdown("### 💾 Esportazione")
     if tit_inp and ver_inp:
         pdf_data = genera_pdf(tit_inp, ver_inp)
-        st.download_button(label="📥 SCARICA PERGAMENA PDF", data=pdf_data, file_name=f"{tit_inp}.pdf", mime="application/pdf", use_container_width=True)
+        st.download_button(
+            label="📥 SCARICA PERGAMENA PDF",
+            data=pdf_data,
+            file_name=f"{tit_inp}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
     else:
         st.write("Scrivi qualcosa per generare il PDF.")
