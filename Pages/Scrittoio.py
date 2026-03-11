@@ -64,7 +64,7 @@ def show():
         contenuto = st.text_area("Versi o Prosa", value=val_contenuto, height=400)
         
         with st.expander("Dettagli aggiuntivi (Link e Tag)"):
-            link = st.text_input("Link di riferimento", value=val_link)
+            link_rife = st.text_input("Link di riferimento", value=val_link)
             tag_input = st.text_input("Tag (separati da virgola)", value=val_tag)
 
         # --- TASTI AZIONE ---
@@ -78,7 +78,7 @@ def show():
                     "titolo": titolo,
                     "contenuto": contenuto,
                     "categoria": categoria,
-                    "link_riferimento": link,
+                    "link_riferimento": link_rife,
                     "tag": lista_tag,
                     "autore_email": user_email
                 }
