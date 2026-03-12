@@ -1,31 +1,35 @@
+# VERSIONE FINALE ALLINEATA - POETICAMENTE
 import streamlit as st
 from supabase import create_client
 
 def show():
-    # --- Estetica ---
+    # Estetica Poematica
     st.markdown("""
         <style>
         .stApp { background-color: #f5f5dc; }
         h1, h2, h3, p, label { font-family: 'Georgia', serif; color: #2c3e50; }
+        div.stButton > button {
+            background-color: #708238 !important; /* Verde Salvia */
+            color: white !important;
+            border-radius: 10px;
+            border: none;
+        }
         </style>
         """, unsafe_allow_html=True)
 
-    # --- Connessione ---
     url = st.secrets["SUPABASE_URL"]
     key = st.secrets["SUPABASE_KEY"]
     supabase = create_client(url, key)
 
     if "user" in st.session_state:
         user_id = st.session_state.user.id
-        user_email = st.session_state.user.email
-
         st.title("✒️ Lo Scrittoio")
 
-        # --- Recupero Opere ---
         try:
             res = supabase.table("Opere").select("*").eq("user_id", user_id).order("creato_il", desc=True).execute()
             opere = res.data
-        except:
+        except Exception as e:
+            st.error(f"Errore DB: {e}")
             opere = []
 
         scelta = st.sidebar.selectbox("Carica opera:", ["Nuova Opera"] + [o['titolo'] for o in opere])
@@ -35,7 +39,6 @@ def show():
         v_testo = opera_corrente['contenuto'] if opera_corrente else ""
         v_cat = opera_corrente.get('categoria', "Poesia") if opera_corrente else "Poesia"
 
-        # --- Layout ---
         col1, col2 = st.columns([2, 1])
         with col1:
             titolo = st.text_input("Titolo", value=v_titolo)
@@ -47,18 +50,12 @@ def show():
         contenuto = st.text_area("Versi", value=v_testo, height=400)
 
         if st.button("💾 Salva nel Registro"):
-            dati = {
-                "user_id": user_id,
-                "titolo": titolo,
-                "contenuto": contenuto,
-                "categoria": categoria,
-                "autore_email": user_email
-            }
+            dati = {"user_id": user_id, "titolo": titolo, "contenuto": contenuto, "categoria": categoria, "autore_email": st.session_state.user.email}
             if opera_corrente:
                 supabase.table("Opere").update(dati).eq("id", opera_corrente['id']).execute()
             else:
                 supabase.table("Opere").insert(dati).execute()
-            st.success("Salvato!")
+            st.success("Opera salvata!")
             st.rerun()
     else:
         st.warning("Accedi dalla Home.")
