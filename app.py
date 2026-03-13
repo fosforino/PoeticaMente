@@ -22,34 +22,40 @@ def apply_global_style():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
-        .stApp, [data-testid="stSidebar"] { 
-            background-color: #fdf5e6 !important; 
+        /* SFONDO PERGAMENA INCRESPATA */
+        .stApp { 
+            background-color: #fdf5e6;
+            background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png"); /* Trama carta fatta a mano */
             color: #3e2723 !important; 
             font-family: 'EB Garamond', serif !important; 
         }
 
-        /* Bottoni Standard Marroni */
+        /* MENU A SCOMPARSA (Selectbox) - Diventa Marrone Antico */
+        div[data-baseweb="select"] > div {
+            background-color: #fdf5e6 !important;
+            border: 1px solid #3e2723 !important;
+            border-radius: 8px;
+        }
+        
+        /* Colore del testo dentro il menu */
+        div[data-baseweb="select"] span {
+            color: #3e2723 !important;
+            font-weight: 500;
+        }
+
+        /* Bottoni Uniformati */
         div.stButton > button { 
-            background-color: #3e2723; 
+            background-color: #3e2723 !important; 
             color: #fdf5e6 !important; 
             border: 1px solid #c19a6b !important; 
             font-family: 'Playfair Display', serif !important; 
-            transition: 0.3s all ease;
             border-radius: 8px !important;
+            transition: 0.3s all ease;
         }
         
         div.stButton > button:hover {
-            filter: brightness(1.1);
-            color: white !important;
-        }
-
-        .codice-onore {
-            background-color: rgba(245, 241, 232, 0.8);
-            padding: 15px;
-            border-left: 5px solid #3e2723;
-            border-radius: 4px;
-            font-style: italic;
-            margin: 15px 0;
+            background-color: #5d4037 !important;
+            transform: scale(1.02);
         }
 
         .poetic-title { 
@@ -57,6 +63,7 @@ def apply_global_style():
             font-size: 3.5rem; 
             text-align: center; 
             color: #3e2723; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
     </style>
     """, unsafe_allow_html=True)
