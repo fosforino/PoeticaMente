@@ -87,47 +87,34 @@ def show():
             idx = cats.index(v_cat) if v_cat in cats else 0
             categoria = st.selectbox("Categoria", cats, index=idx)
 
-        # --- SEZIONE LAYOUT E ATMOSFERE ---
-        with st.expander("🎨 Impostazioni Grafiche ed Editoriali"):
-            st.write("🔍 **Trova l'ispirazione su:**")
+        # --- SEZIONE LAYOUT SEMPLIFICATA ---
+        with st.expander("🎨 Impostazioni Grafiche"):
+            st.write("🔍 **Cerca immagini su:**")
             l1, l2, l3 = st.columns(3)
             l1.markdown("[📸 Unsplash](https://unsplash.com)")
             l2.markdown("[🎨 Pixabay](https://pixabay.com)")
             l3.markdown("[💎 Adobe Stock](https://stock.adobe.com)")
             st.divider()
 
-            atmosfere = {
-                "Personalizzato": "",
-                "📜 Antica Pergamena": "https://www.transparenttextures.com/patterns/papyrus.png",
-                "🌌 Notte Stellata": "https://images.unsplash.com/photo-1506318137071-a8e063b4bcc0?q=80&w=1000&auto=format&fit=crop",
-                "🍃 Bosco Nebbioso": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop",
-                "🏙️ Grattacielo": "https://images.unsplash.com/photo-1449156003053-c30670b9883c?q=80&w=1000&auto=format&fit=crop"
-            }
-            scelta_atm = st.selectbox("🎭 Scegli un'atmosfera pronta:", list(atmosfere.keys()))
-            
-            if scelta_atm != "Personalizzato":
-                img_url = atmosfere[scelta_atm]
-            else:
-                img_url = st.text_input("🔗 Link Immagine dal Web:", value=v_img, placeholder="Fai tasto destro sulla foto -> Copia indirizzo immagine")
-            
-            file_pc = st.file_uploader("💻 Oppure carica dal tuo PC:", type=["jpg", "png", "jpeg"])
+            file_pc = st.file_uploader("💻 Carica un'immagine dal tuo PC:", type=["jpg", "png", "jpeg"])
+            img_url_manual = st.text_input("🔗 Oppure incolla un link immagine diretto:", value=v_img if v_img != "PC" else "")
             
             c1, c2 = st.columns(2)
             with c1:
                 width_img = st.slider("Larghezza Immagine (%)", 10, 100, int(v_stile.get("width", 100)))
             with c2:
-                opac_img = st.slider("Opacità Immagine", 0.1, 1.0, float(v_stile.get("opacity", 0.5)))
+                opac_img = st.slider("Opacità Sfondo", 0.1, 1.0, float(v_stile.get("opacity", 0.4)))
             
             posizione = st.selectbox("Posizione Immagine", ["Sfondo", "Sopra il testo", "Sotto il testo"], 
                                      index=["Sfondo", "Sopra il testo", "Sotto il testo"].index(v_stile.get("position", "Sfondo")))
 
         # Logica immagine finale
-        img_final = img_url
+        img_final = img_url_manual
         if file_pc:
             b64 = base64.b64encode(file_pc.read()).decode()
             img_final = f"data:image/png;base64,{b64}"
 
-        # APPLICAZIONE CSS BLINDATA
+        # APPLICAZIONE CSS
         if img_final and posizione == "Sfondo":
             st.markdown(f"""
                 <style>
@@ -158,7 +145,7 @@ def show():
                         stile_data = {"width": width_img, "opacity": opac_img, "position": posizione}
                         dati = {
                             "titolo": titolo, "versi": contenuto, "categoria": categoria, 
-                            "autore": nome_poeta, "pubblica": pubblica, "immagine_url": img_url if not file_pc else "PC",
+                            "autore": nome_poeta, "pubblica": pubblica, "immagine_url": img_url_manual if not file_pc else "PC",
                             "stile_layout": stile_data
                         }
                         if opera_corrente:
