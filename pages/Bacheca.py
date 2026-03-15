@@ -31,7 +31,7 @@ def apply_aesthetic_style():
         }}
         .poesia-card {{
             background-color: rgba(255, 250, 240, 0.8);
-            padding: 0; /* Tolto padding per far aderire l'immagine ai bordi sopra */
+            padding: 0; 
             border-radius: 4px;
             border: 1px solid rgba(193, 154, 107, 0.3);
             box-shadow: 2px 4px 15px rgba(0,0,0,0.05);
@@ -71,6 +71,7 @@ def apply_aesthetic_style():
             padding: 4px 10px;
             border-radius: 12px;
             margin-right: 10px;
+            display: inline-block;
         }}
         </style>
         {img_html}
@@ -86,7 +87,6 @@ def show():
     supabase = create_client(url, key)
 
     try:
-        # Filtro: solo opere pubbliche
         res = supabase.table("Opere").select("*").eq("pubblica", True).order("created_at", desc=True).execute()
         poemi = res.data if res.data else []
 
@@ -97,6 +97,7 @@ def show():
         
         with col_m_2:
             for p in poemi:
+                id_opera = p.get('id')
                 titolo = p.get('titolo', 'Senza Titolo')
                 testo = p.get('versi', '')
                 autore = p.get('autore', 'Anonimo')
@@ -106,11 +107,9 @@ def show():
                 # Inizio Card
                 st.markdown('<div class="poesia-card">', unsafe_allow_html=True)
                 
-                # Se c'è l'immagine, la mostriamo in cima
-                if img_url:
+                if img_url and img_url != "PC":
                     st.image(img_url, use_container_width=True)
                 
-                # Testo della poesia
                 st.markdown(f"""
                     <div class="card-content">
                         <div class="titolo-poesia">{titolo}</div>
@@ -120,16 +119,45 @@ def show():
                     </div>
                     """, unsafe_allow_html=True)
                 
-                # Social links
+                # Area Interattiva (Condivisione + Report)
                 testo_share = f"*{titolo}*\n\n{testo}\n\n— {autore}"
                 testo_url = urllib.parse.quote(testo_share)
-                st.markdown(f"""
-                    <div style="padding: 0 30px 30px 30px;">
-                        <a href="https://wa.me/?text={testo_url}" target="_blank" class="social-link">WhatsApp</a>
-                        <a href="mailto:?body={testo_url}" class="social-link">Email</a>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                
+                c_social, c_report = st.columns([3, 1])
+                
+                with c_social:
+                    st.markdown(f"""
+                        <div style="padding: 0 0 30px 30px;">
+                            <a href="https://wa.me/?text={testo_url}" target="_blank" class="social-link">WhatsApp</a>
+                            <a href="mailto:?body={testo_url}" class="social-link">Email</a>
+                        </div>
+                        """, unsafe_allow_html=True)
+                
+                with c_report:
+                    # SISTEMA REPORTING
+                    with st.popover("🚩 Segnala"):
+                        st.write("Aiutaci a mantenere Poeticamente un luogo sicuro.")
+                        motivo = st.selectbox("Motivo della segnalazione:", 
+                                            ["Contenuto inappropriato", "Plagio", "Spam", "Altro"], 
+                                            key=f"mot_{id_opera}")
+                        desc = st.text_area("Dettagli (opzionale):", key=f"desc_{id_opera}")
+                        
+                        if st.button("Invia Segnalazione", key=f"btn_{id_opera}"):
+                            nome_segnalatore = st.session_state.get("utente", "Anonimo")
+                            report_data = {
+                                "opera_id": id_opera,
+                                "titolo_opera": titolo,
+                                "segnalatore": nome_segnalatore,
+                                "motivo": motivo,
+                                "descrizione": desc
+                            }
+                            try:
+                                supabase.table("Segnalazioni").insert(report_data).execute()
+                                st.success("Grazie. La segnalazione è stata acquisita.")
+                            except Exception as err:
+                                st.error(f"Errore nell'invio: {err}")
+                
+                st.markdown('</div>', unsafe_allow_html=True) # Fine Card
                 
     except Exception as e:
         st.error(f"Errore bacheca: {e}")
