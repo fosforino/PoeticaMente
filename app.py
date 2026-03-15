@@ -52,6 +52,11 @@ def apply_global_style(image_path):
             pointer-events: none;
         }
 
+        /* NASCONDE MENU AUTOMATICO SIDEBAR */
+        [data-testid="stSidebarNav"] {
+            display: none;
+        }
+
         /* MENU E BOTTONI */
         div[data-baseweb="select"] > div {
             background-color: #fdf5e6 !important;
@@ -92,7 +97,6 @@ if "authenticated" not in st.session_state:
 
 # --- LOGICA DI ACCESSO ---
 if not st.session_state.authenticated:
-    # Mostriamo l'icona nitida solo nel login
     col_logo_1, col_logo_2, col_logo_3 = st.columns([1, 0.6, 1])
     with col_logo_2:
         if os.path.exists(path_icona):
