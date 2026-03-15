@@ -17,6 +17,8 @@ def apply_aesthetic_style():
 
     st.markdown(f"""
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
         .stApp {{
             background-color: #fdf5e6;
             background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png");
@@ -30,13 +32,22 @@ def apply_aesthetic_style():
             z-index: -1; pointer-events: none;
         }}
         .poesia-card {{
-            background-color: rgba(255, 250, 240, 0.8);
-            padding: 0; 
-            border-radius: 4px;
-            border: 1px solid rgba(193, 154, 107, 0.3);
-            box-shadow: 2px 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
+            background-color: rgba(255, 250, 240, 0.9);
+            border-radius: 8px;
+            border: 1px solid rgba(193, 154, 107, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
             overflow: hidden;
+            transition: transform 0.3s ease;
+        }}
+        .poesia-card:hover {{
+            transform: translateY(-5px);
+        }}
+        .anteprima-img {{
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(193, 154, 107, 0.2);
         }}
         .card-content {{
             padding: 30px;
@@ -46,6 +57,7 @@ def apply_aesthetic_style():
             color: #3e2723;
             font-size: 2.2rem;
             margin-bottom: 5px;
+            line-height: 1.2;
         }}
         .versi-testo {{
             font-family: 'EB Garamond', serif;
@@ -53,7 +65,7 @@ def apply_aesthetic_style():
             line-height: 1.6;
             white-space: pre-wrap;
             color: #2c2c2c;
-            margin: 20px 0;
+            margin: 25px 0;
         }}
         .firma-autore {{
             font-family: 'Playfair Display', serif;
@@ -62,16 +74,22 @@ def apply_aesthetic_style():
             color: #795548;
             border-top: 1px solid rgba(193, 154, 107, 0.2);
             padding-top: 15px;
+            font-size: 1.1rem;
         }}
         .social-link {{
             text-decoration: none;
             font-size: 0.85rem;
             color: #795548;
             border: 1px solid #c19a6b;
-            padding: 4px 10px;
-            border-radius: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
             margin-right: 10px;
             display: inline-block;
+            transition: 0.3s;
+        }}
+        .social-link:hover {{
+            background: #c19a6b;
+            color: white;
         }}
         </style>
         {img_html}
@@ -80,18 +98,19 @@ def apply_aesthetic_style():
 def show():
     apply_aesthetic_style()
     
-    st.markdown("<h1 style='text-align: center;'>Bacheca Poetica</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; font-family: \"Playfair Display\", serif; font-size: 3rem; margin-bottom: 50px;'>🏛️ La Grande Bacheca</h1>", unsafe_allow_html=True)
     
     url = st.secrets["SUPABASE_URL"]
     key = st.secrets["SUPABASE_KEY"]
     supabase = create_client(url, key)
 
     try:
+        # Recuperiamo tutte le info incluse le immagini e lo stile
         res = supabase.table("Opere").select("*").eq("pubblica", True).order("created_at", desc=True).execute()
         poemi = res.data if res.data else []
 
         if not poemi:
-            st.info("Nessuna opera è stata ancora affissa. Sii il primo!")
+            st.info("La bacheca è ancora bianca. Inizia a scrivere nel tuo Scrittoio!")
         
         col_m_1, col_m_2, col_m_3 = st.columns([0.1, 1, 0.1])
         
@@ -102,24 +121,35 @@ def show():
                 testo = p.get('versi', '')
                 autore = p.get('autore', 'Anonimo')
                 categoria = p.get('categoria', 'Poesia')
+                
+                # Gestione Immagine
                 img_url = p.get('immagine_url', "")
-
-                # Inizio Card
+                stile = p.get('stile_layout', {}) # Se abbiamo salvato stili particolari
+                
+                # Logica visualizzazione immagine
+                # Se è un link esterno o una base64 salvata come "PC" (che però richiede gestione media se complessa)
+                # Per ora mostriamo l'immagine se il link è valido
+                
                 st.markdown('<div class="poesia-card">', unsafe_allow_html=True)
                 
+                # Anteprima Immagine (se presente)
                 if img_url and img_url != "PC":
-                    st.image(img_url, use_container_width=True)
-                
+                    st.markdown(f'<img src="{img_url}" class="anteprima-img">', unsafe_allow_html=True)
+                elif img_url == "PC":
+                    # Nota: Se è salvata in locale sul PC dell'utente, qui non la vedremo 
+                    # a meno di non caricarla su un cloud storage. Per ora mettiamo un placeholder elegante.
+                    st.markdown(f'<div style="background: #e9e0d1; height: 10px;"></div>', unsafe_allow_html=True)
+
                 st.markdown(f"""
                     <div class="card-content">
+                        <div style='color: #c19a6b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;'>{categoria}</div>
                         <div class="titolo-poesia">{titolo}</div>
-                        <div style='color: #c19a6b; font-size: 0.8rem; text-transform: uppercase;'>{categoria}</div>
                         <div class="versi-testo">{testo}</div>
-                        <div class="firma-autore">Il Poeta: {autore}</div>
+                        <div class="firma-autore">— {autore}</div>
                     </div>
                     """, unsafe_allow_html=True)
                 
-                # Area Interattiva (Condivisione + Report)
+                # Footer Interattivo
                 testo_share = f"*{titolo}*\n\n{testo}\n\n— {autore}"
                 testo_url = urllib.parse.quote(testo_share)
                 
@@ -134,30 +164,20 @@ def show():
                         """, unsafe_allow_html=True)
                 
                 with c_report:
-                    # SISTEMA REPORTING
                     with st.popover("🚩 Segnala"):
-                        st.write("Aiutaci a mantenere Poeticamente un luogo sicuro.")
-                        motivo = st.selectbox("Motivo della segnalazione:", 
-                                            ["Contenuto inappropriato", "Plagio", "Spam", "Altro"], 
-                                            key=f"mot_{id_opera}")
-                        desc = st.text_area("Dettagli (opzionale):", key=f"desc_{id_opera}")
-                        
-                        if st.button("Invia Segnalazione", key=f"btn_{id_opera}"):
-                            nome_segnalatore = st.session_state.get("utente", "Anonimo")
+                        st.write("Segnala contenuto inappropriato")
+                        motivo = st.selectbox("Motivo:", ["Inappropriato", "Plagio", "Spam"], key=f"mot_{id_opera}")
+                        if st.button("Invia", key=f"btn_{id_opera}"):
                             report_data = {
                                 "opera_id": id_opera,
                                 "titolo_opera": titolo,
-                                "segnalatore": nome_segnalatore,
-                                "motivo": motivo,
-                                "descrizione": desc
+                                "segnalatore": st.session_state.get("utente", "Anonimo"),
+                                "motivo": motivo
                             }
-                            try:
-                                supabase.table("Segnalazioni").insert(report_data).execute()
-                                st.success("Grazie. La segnalazione è stata acquisita.")
-                            except Exception as err:
-                                st.error(f"Errore nell'invio: {err}")
+                            supabase.table("Segnalazioni").insert(report_data).execute()
+                            st.success("Segnalato.")
                 
-                st.markdown('</div>', unsafe_allow_html=True) # Fine Card
+                st.markdown('</div>', unsafe_allow_html=True)
                 
     except Exception as e:
         st.error(f"Errore bacheca: {e}")
