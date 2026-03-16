@@ -1,5 +1,5 @@
 import streamlit as st
-from pages import Home, Scrittoio, Bacheca, Archivio
+from pages import Home, Scrittoio, Bacheca, Archivio, Filosofamente
 import os
 import base64
 
@@ -19,7 +19,6 @@ def get_base64_image(image_path):
 
 def apply_global_style(image_path):
     img_base64 = get_base64_image(image_path)
-    
     if img_base64:
         st.markdown(f"""
             <img src="data:image/png;base64,{img_base64}" class="bg-watermark">
@@ -79,8 +78,9 @@ def esegui_logout():
         del st.session_state[key]
     st.rerun()
 
-path_icona = "Poeticamente.png" 
-apply_global_style(path_icona)
+# Definizione percorsi icone (Entrambi puntano al file rinominato)
+path_icona_standard = "Poeticamente.png"
+path_icona_filo = "Poeticamente.png"
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -91,9 +91,8 @@ if not st.session_state.authenticated:
     
     col_logo_1, col_logo_2, col_logo_3 = st.columns([1, 0.6, 1])
     with col_logo_2:
-        if os.path.exists(path_icona):
-            # FIX: rimosso use_container_width per conformità 2026
-            st.image(path_icona, width=250)
+        if os.path.exists(path_icona_standard):
+            st.image(path_icona_standard, width=250)
     
     st.markdown("<h1 class='poetic-title'>Poeticamente</h1>", unsafe_allow_html=True)
     
@@ -115,13 +114,20 @@ if not st.session_state.authenticated:
                 st.error("La chiave o il giuramento non sono validi.")
     st.stop()
 
-# --- SIDEBAR ---
+# --- GESTIONE SIDEBAR E NAVIGAZIONE ---
+page = st.sidebar.radio("Scegli la tua meta:", ["Home", "Scrittoio", "Bacheca", "Archivio", "Filosofamente"])
+
+# Applichiamo il watermark dinamico
+if page == "Filosofamente":
+    apply_global_style(path_icona_filo)
+else:
+    apply_global_style(path_icona_standard)
+
 with st.sidebar:
-    if os.path.exists(path_icona):
-        st.image(path_icona, width=150)
+    if os.path.exists(path_icona_standard):
+        st.image(path_icona_standard, width=150)
+    
     st.markdown(f"<h2 style='text-align: center; color: #3e2723;'>Poeta:<br>{st.session_state.utente}</h2>", unsafe_allow_html=True)
-    st.markdown("---")
-    page = st.sidebar.radio("Scegli la tua meta:", ["Home", "Scrittoio", "Bacheca", "Archivio"])
     st.markdown("---")
     if st.button("Congeda il Profilo"):
         esegui_logout()
@@ -131,3 +137,4 @@ if page == "Home": Home.show()
 elif page == "Scrittoio": Scrittoio.show()
 elif page == "Bacheca": Bacheca.show()
 elif page == "Archivio": Archivio.show()
+elif page == "Filosofamente": Filosofamente.show()

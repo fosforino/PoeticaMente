@@ -11,6 +11,7 @@ def get_base64_image(image_path):
     return None
 
 def apply_aesthetic_style():
+    # Gestione sicura dell'icona watermark
     path_icona = "Poeticamente.png"
     img_base64 = get_base64_image(path_icona)
     img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-bacheca">' if img_base64 else ""
@@ -105,7 +106,6 @@ def show():
     supabase = create_client(url, key)
 
     try:
-        # Recuperiamo tutte le info incluse le immagini e lo stile
         res = supabase.table("Opere").select("*").eq("pubblica", True).order("created_at", desc=True).execute()
         poemi = res.data if res.data else []
 
@@ -121,23 +121,13 @@ def show():
                 testo = p.get('versi', '')
                 autore = p.get('autore', 'Anonimo')
                 categoria = p.get('categoria', 'Poesia')
-                
-                # Gestione Immagine
                 img_url = p.get('immagine_url', "")
-                stile = p.get('stile_layout', {}) # Se abbiamo salvato stili particolari
-                
-                # Logica visualizzazione immagine
-                # Se è un link esterno o una base64 salvata come "PC" (che però richiede gestione media se complessa)
-                # Per ora mostriamo l'immagine se il link è valido
                 
                 st.markdown('<div class="poesia-card">', unsafe_allow_html=True)
                 
-                # Anteprima Immagine (se presente)
                 if img_url and img_url != "PC":
                     st.markdown(f'<img src="{img_url}" class="anteprima-img">', unsafe_allow_html=True)
                 elif img_url == "PC":
-                    # Nota: Se è salvata in locale sul PC dell'utente, qui non la vedremo 
-                    # a meno di non caricarla su un cloud storage. Per ora mettiamo un placeholder elegante.
                     st.markdown(f'<div style="background: #e9e0d1; height: 10px;"></div>', unsafe_allow_html=True)
 
                 st.markdown(f"""
@@ -149,7 +139,6 @@ def show():
                     </div>
                     """, unsafe_allow_html=True)
                 
-                # Footer Interattivo
                 testo_share = f"*{titolo}*\n\n{testo}\n\n— {autore}"
                 testo_url = urllib.parse.quote(testo_share)
                 

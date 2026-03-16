@@ -27,14 +27,21 @@ def genera_pdf(titolo, categoria, contenuto, autore):
     return pdf.output(dest='S').encode('latin-1')
 
 def show():
+    # Usiamo l'icona standard per lo Scrittoio
     path_icona = "Poeticamente.png"
     img_base64 = get_base64_image(path_icona)
     img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-scrittoio">' if img_base64 else ""
 
     st.markdown(f"""
         <style>
-        .stApp {{ background-color: #fdf5e6 !important; background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important; }}
-        .bg-watermark-scrittoio {{ position: fixed; top: 50%; left: 55%; transform: translate(-50%, -50%); width: 50vw; opacity: 0.05; filter: blur(12px); z-index: -1; pointer-events: none; }}
+        .stApp {{ 
+            background-color: #fdf5e6 !important; 
+            background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important; 
+        }}
+        .bg-watermark-scrittoio {{ 
+            position: fixed; top: 50%; left: 55%; transform: translate(-50%, -50%); 
+            width: 50vw; opacity: 0.05; filter: blur(12px); z-index: -1; pointer-events: none; 
+        }}
         
         .stTextArea textarea {{ 
             border: 1px solid #c19a6b !important; 
@@ -42,11 +49,9 @@ def show():
             font-family: 'EB Garamond', serif !important; 
             font-size: 1.3rem !important; 
             color: #3e2723 !important; 
-            transition: all 0.3s ease;
         }}
         
-        div.stButton > button {{ border: none !important; color: white !important; font-weight: bold !important; padding: 0.6em 1.2em !important; border-radius: 8px !important; text-transform: uppercase; transition: 0.3s; }}
-        div.stButton > button:hover {{ opacity: 0.9; transform: translateY(-2px); }}
+        div.stButton > button {{ border: none !important; color: white !important; font-weight: bold !important; padding: 0.6em 1.2em !important; border-radius: 8px !important; text-transform: uppercase; }}
         div.stButton > button[key="btn_salva"] {{ background: #2e7d32 !important; box-shadow: 0 4px 0 #1b5e20; }}
         div.stButton > button[key="btn_stampa"] {{ background: #455a64 !important; box-shadow: 0 4px 0 #263238; }}
         div.stButton > button[key="btn_cancella"] {{ background: #8e0000 !important; box-shadow: 0 4px 0 #4a0000; }}
@@ -87,34 +92,22 @@ def show():
             idx = cats.index(v_cat) if v_cat in cats else 0
             categoria = st.selectbox("Categoria", cats, index=idx)
 
-        # --- SEZIONE LAYOUT SEMPLIFICATA ---
         with st.expander("🎨 Impostazioni Grafiche"):
-            st.write("🔍 **Cerca immagini su:**")
-            l1, l2, l3 = st.columns(3)
-            l1.markdown("[📸 Unsplash](https://unsplash.com)")
-            l2.markdown("[🎨 Pixabay](https://pixabay.com)")
-            l3.markdown("[💎 Adobe Stock](https://stock.adobe.com)")
-            st.divider()
-
-            file_pc = st.file_uploader("💻 Carica un'immagine dal tuo PC:", type=["jpg", "png", "jpeg"])
-            img_url_manual = st.text_input("🔗 Oppure incolla un link immagine diretto:", value=v_img if v_img != "PC" else "")
+            file_pc = st.file_uploader("💻 Carica immagine:", type=["jpg", "png", "jpeg"])
+            img_url_manual = st.text_input("🔗 Link immagine:", value=v_img if v_img != "PC" else "")
             
             c1, c2 = st.columns(2)
-            with c1:
-                width_img = st.slider("Larghezza Immagine (%)", 10, 100, int(v_stile.get("width", 100)))
-            with c2:
-                opac_img = st.slider("Opacità Sfondo", 0.1, 1.0, float(v_stile.get("opacity", 0.4)))
+            with c1: width_img = st.slider("Larghezza (%)", 10, 100, int(v_stile.get("width", 100)))
+            with c2: opac_img = st.slider("Opacità Sfondo", 0.1, 1.0, float(v_stile.get("opacity", 0.4)))
             
-            posizione = st.selectbox("Posizione Immagine", ["Sfondo", "Sopra il testo", "Sotto il testo"], 
+            posizione = st.selectbox("Posizione", ["Sfondo", "Sopra il testo", "Sotto il testo"], 
                                      index=["Sfondo", "Sopra il testo", "Sotto il testo"].index(v_stile.get("position", "Sfondo")))
 
-        # Logica immagine finale
         img_final = img_url_manual
         if file_pc:
             b64 = base64.b64encode(file_pc.read()).decode()
             img_final = f"data:image/png;base64,{b64}"
 
-        # APPLICAZIONE CSS
         if img_final and posizione == "Sfondo":
             st.markdown(f"""
                 <style>
@@ -152,12 +145,10 @@ def show():
                             supabase.table("Opere").update(dati).eq("id", opera_corrente['id']).execute()
                         else:
                             supabase.table("Opere").insert(dati).execute()
-                        st.success("L'opera è stata impaginata e custodita.")
+                        st.success("L'opera è stata custodita.")
                         st.rerun()
-                    except Exception as e:
-                        st.error(f"Errore: {e}")
-                else:
-                    st.warning("Inserisci titolo e testo.")
+                    except Exception as e: st.error(f"Errore: {e}")
+                else: st.warning("Manca titolo o testo.")
 
         with b2:
             if titolo and contenuto:

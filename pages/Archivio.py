@@ -2,11 +2,51 @@ import streamlit as st
 from supabase import create_client
 import pandas as pd
 import io
+import os
+import base64
+
+def get_base64_image(image_path):
+    if os.path.exists(image_path):
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    return None
+
+def apply_archive_style():
+    path_icona = "Poeticamente.png"
+    img_base64 = get_base64_image(path_icona)
+    img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-archive">' if img_base64 else ""
+
+    st.markdown(f"""
+        <style>
+        .stApp {{
+            background-color: #fdf5e6;
+            background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png");
+        }}
+        .bg-watermark-archive {{
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55vw; opacity: 0.04; filter: blur(8px);
+            z-index: -1; pointer-events: none;
+        }}
+        /* Styling delle metriche */
+        [data-testid="stMetricValue"] {{
+            font-family: 'Playfair Display', serif;
+            color: #3e2723 !important;
+        }}
+        [data-testid="stMetricLabel"] {{
+            font-family: 'EB Garamond', serif;
+            font-size: 1.1rem !important;
+            color: #795548 !important;
+        }}
+        </style>
+        {img_html}
+        """, unsafe_allow_html=True)
 
 def show():
-    st.markdown("<h1 style='text-align: center; color: #3e2723;'>📊 Il tuo Archivio Personale</h1>", unsafe_allow_html=True)
+    apply_archive_style()
+    
+    st.markdown("<h1 style='text-align: center; font-family: \"Playfair Display\", serif; color: #3e2723; font-size: 3rem;'>📊 Il tuo Archivio Personale</h1>", unsafe_allow_html=True)
 
-    # --- CONNESSIONE ---
     url = st.secrets["SUPABASE_URL"]
     key = st.secrets["SUPABASE_KEY"]
     supabase = create_client(url, key)
@@ -15,38 +55,34 @@ def show():
         nome_poeta = st.session_state.utente
         
         try:
-            # Recuperiamo TUTTE le opere dell'utente
-            res = supabase.table("Opere").select("*").eq("autore", nome_poeta).execute()
+            res = supabase.table("Opere").select("*").eq("autore", nome_poeta).order("created_at", desc=True).execute()
             opere = res.data if res.data else []
 
             if opere:
-                # Creiamo un DataFrame (una tabella intelligente)
                 df = pd.DataFrame(opere)
                 
-                # --- CALCOLI STATISTICI ---
+                # Calcoli
                 tot_opere = len(df)
-                # Contiamo le parole in ogni riga della colonna 'versi'
                 df['num_parole'] = df['versi'].apply(lambda x: len(str(x).split()))
                 tot_parole = df['num_parole'].sum()
 
-                # --- VISUALIZZAZIONE CARD STATISTICHE ---
+                # Dashboard Statistiche
+                st.markdown("<br>", unsafe_allow_html=True)
                 c1, c2, c3 = st.columns(3)
-                c1.metric("Opere Custodite", tot_opere)
-                c2.metric("Inchiostro Versato (Parole)", tot_parole)
-                c3.metric("Media parole per opera", int(tot_parole/tot_opere))
+                c1.metric("📜 Opere Custodite", tot_opere)
+                c2.metric("✒️ Inchiostro (Parole)", tot_parole)
+                c3.metric("📏 Media per Opera", int(tot_parole/tot_opere) if tot_opere > 0 else 0)
 
                 st.markdown("---")
 
-                # --- EXPORT CSV ---
-                st.subheader("📥 Esporta i tuoi dati")
-                # Prepariamo il CSV in memoria
-                csv_buffer = io.StringIO()
-                # Esportiamo solo le colonne importanti
+                # Esportazione
+                st.markdown("### 📥 Estrai il tuo Manoscritto")
                 df_export = df[['created_at', 'titolo', 'categoria', 'versi']]
+                csv_buffer = io.StringIO()
                 df_export.to_csv(csv_buffer, index=False, encoding='utf-8')
                 
                 st.download_button(
-                    label="Scarica tutto l'Archivio in CSV",
+                    label="💾 Scarica Archivio in formato CSV",
                     data=csv_buffer.getvalue(),
                     file_name=f"archivio_{nome_poeta}.csv",
                     mime="text/csv",
@@ -54,17 +90,20 @@ def show():
 
                 st.markdown("---")
 
-                # --- TABELLA RIASSUNTIVA ---
-                st.subheader("📜 Riepilogo Opere")
-                st.dataframe(df_export, use_container_width=True)
+                # Tabella Riassuntiva
+                st.markdown("### 📜 Registro delle Opere")
+                # Rendiamo la tabella più leggibile
+                df_show = df_export.copy()
+                df_show['created_at'] = pd.to_datetime(df_show['created_at']).dt.date
+                st.dataframe(df_show, use_container_width=True)
 
             else:
-                st.info("Non hai ancora custodito nessuna opera. Inizia dallo Scrittoio!")
+                st.info("Il tuo archivio è ancora vuoto. Componi la tua prima opera nello Scrittoio!")
 
         except Exception as e:
-            st.error(f"Errore nel recupero dati: {e}")
+            st.error(f"Errore nel recupero dei dati: {e}")
     else:
-        st.warning("Effettua l'accesso dalla Home per vedere il tuo archivio.")
+        st.warning("Posa il calamaio! Devi prima identificarti nella Home.")
 
 if __name__ == "__main__":
     show()
