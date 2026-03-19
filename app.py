@@ -2,6 +2,10 @@ import streamlit as st
 from pages import Home, Scrittoio, Bacheca, Archivio, Filosofamente
 import os
 import base64
+import pandas as pd
+from fpdf import FPDF
+from supabase import create_client, Client
+from pydantic import BaseModel
 
 # --- CONFIGURAZIONE STREAMLIT ---
 st.set_page_config(
@@ -19,40 +23,43 @@ def get_base64_image(image_path):
 
 def apply_global_style(image_path):
     img_base64 = get_base64_image(image_path)
-    if img_base64:
-        st.markdown(f"""
-            <img src="data:image/png;base64,{img_base64}" class="bg-watermark">
-        """, unsafe_allow_html=True)
-
-    st.markdown("""
+    
+    # CSS Unificato: Sfondo pergamena + Filigrana soffusa + Font
+    st.markdown(f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
-        .stApp { 
+        /* LA FILIGRANA: Iniettata come pseudo-elemento per non spostare il layout */
+        [data-testid="stAppViewContainer"]::before {{
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/png;base64,{img_base64 if img_base64 else ''}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            background-size: 35%; 
+            opacity: 0.05; 
+            z-index: -1;
+            pointer-events: none;
+        }}
+
+        .stApp {{ 
             background-color: #fdf5e6 !important;
             background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
             color: #3e2723 !important; 
             font-family: 'EB Garamond', serif !important; 
-        }
+        }}
 
-        .bg-watermark {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70vw; opacity: 0.07; filter: blur(8px);
-            z-index: -1; pointer-events: none;
-        }
+        [data-testid="stSidebarNav"] {{ display: none; }}
 
-        [data-testid="stSidebarNav"] { display: none; }
-
-        .main .block-container {
+        .main .block-container {{
             max-width: 1000px;
-            padding-top: 2rem;
+            padding-top: 1rem;
             margin: auto;
-        }
+        }}
 
-        /* Box di Login Elegante */
-        .login-box {
+        .login-box {{
             background: rgba(255, 255, 255, 0.4);
             padding: 40px;
             border-radius: 15px;
@@ -60,22 +67,22 @@ def apply_global_style(image_path):
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             backdrop-filter: blur(5px);
             margin-top: 20px;
-        }
+        }}
 
-        div.stButton > button { 
+        div.stButton > button {{ 
             background-color: #3e2723 !important; 
             color: #fdf5e6 !important; 
             border: 1px solid #c19a6b !important; 
             border-radius: 8px !important;
             width: 100%;
-        }
+        }}
         
-        .poetic-title { 
+        .poetic-title {{ 
             font-family: 'Playfair Display', serif; 
             font-size: 5rem; text-align: center; 
             color: #3e2723; margin-top: -10px;
             letter-spacing: -2px;
-        }
+        }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -84,7 +91,7 @@ def esegui_logout():
         del st.session_state[key]
     st.rerun()
 
-# Percorso immagine aggiornato al nuovo marchio trasparente
+# Percorso immagine aggiornato
 path_icona_standard = "Poeticamente.png"
 
 if "authenticated" not in st.session_state:
@@ -98,7 +105,6 @@ if not st.session_state.authenticated:
     _, col_centrale, _ = st.columns([0.5, 1, 0.5])
     
     with col_centrale:
-        # Icona centrata con ombra esterna
         if os.path.exists(path_icona_standard):
             st.markdown(f"""
                 <div style='text-align: center;'>
@@ -110,9 +116,7 @@ if not st.session_state.authenticated:
         st.markdown("<h1 class='poetic-title'>Poeticamente</h1>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; font-style: italic; font-size: 1.2rem; color: #795548; margin-top: -20px;'>Dove il pensiero si fa inchiostro</p>", unsafe_allow_html=True)
         
-        # Box Contenitore della Login
         st.markdown('<div class="login-box">', unsafe_allow_html=True)
-        
         st.markdown("<h3 style='text-align: center; color: #3e2723; font-family: \"Playfair Display\";'>Identificazione del Poeta</h3>", unsafe_allow_html=True)
         
         nuovo_pseudo = st.text_input("Pseudonimo")
