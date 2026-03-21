@@ -15,7 +15,7 @@
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 80% auto; /* Si adatta a PC e Smartphone */
+    background-size: 80% auto; 
 }
 
 /* Assicura che l'header e il corpo non coprano lo sfondo */
@@ -23,93 +23,31 @@
     background: transparent !important;
 }
 
-/* FILIGRANA CENTRALE */
-.stMain::before {
-    content: "";
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60vw;
-    height: 60vh;
-    background-image: var(--logo-url); /* Usiamo una variabile CSS */
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    opacity: 0.15;
-    mix-blend-mode: multiply;
-    z-index: -1;
-    pointer-events: none;
-}
-
-/* Logo fisso in alto a sinistra */
-.app-logo-fixed {
-    position: fixed;
-    top: 15px; 
-    left: 20px;
-    width: 60px;
-    z-index: 9999;
-    mix-blend-mode: multiply;
-}
-
+/* Nasconde elementi di default Streamlit */
 header { visibility: hidden; }
 [data-testid="stSidebarNav"] { display: none; }
 
-.poetic-title { 
-    font-family: 'Playfair Display', serif; 
-    font-size: 5rem; 
-    text-align: center; 
-    color: #3e2723; 
-    margin-top: 50px;
+/* --- STILE TITOLO LOGIN (Spostato a sinistra per non coprire il cervello) --- */
+.titolo-id {
+    font-family: 'Playfair Display', serif;
+    color: #3e2723;
+    text-align: left !important;
+    padding-left: 2px; /* Allineato al bordo dei campi input */
+    margin-bottom: 20px;
+    margin-top: 20px;
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(255, 252, 240, 0.8);
 }
 
+/* Campi di input traslucidi per far vedere il logo sotto */
 .stTextInput input {
-    background-color: rgba(255, 255, 255, 0.5) !important;
+    background-color: rgba(255, 255, 255, 0.6) !important;
     border: 1px solid #d7ccc8 !important;
 }
 
-/* --- SEZIONE PREMIO: IL MEDAGLIONE --- */
-.medaglione-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 40px 0;
-}
-
-.medaglione-bronzo {
-    width: 280px;
-    height: 280px;
-    object-fit: cover;
-    border-radius: 50%;
-    /* Bordo che simula il metallo del bronzo */
-    border: 8px solid #b87333; 
-    /* Ombra esterna profonda e riflesso interno */
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.4),
-        inset 0 0 20px rgba(255, 255, 255, 0.2);
-    /* Animazione fluida al passaggio del mouse */
-    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.medaglione-bronzo:hover {
-    transform: scale(1.1) rotate(5deg);
-}
-
-/* La pergamena con il messaggio d'onore */
-.pergamena-premio {
-    background: rgba(255, 252, 242, 0.9);
-    padding: 30px;
-    border-radius: 15px;
-    border: 2px solid #d7ccc8;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    max-width: 650px;
-    margin: 20px auto;
-    text-align: center;
-}
-
-/* --- SEZIONE PREMIO SCENOGRAFICA --- */
+/* --- SEZIONE PREMIO SCENOGRAFICA (Medaglione 3D) --- */
 .medaglione-3d-container {
-    perspective: 1000px; /* Crea la profondità 3D */
+    perspective: 1000px;
     width: 300px;
     height: 300px;
     margin: 40px auto;
@@ -123,16 +61,13 @@ header { visibility: hidden; }
     height: 280px;
     object-fit: cover;
     border-radius: 50%;
-    /* Bordo che simula il metallo del bronzo con riflesso lucido */
     border: 8px solid #b87333; 
     box-shadow: 
         0 20px 50px rgba(0, 0, 0, 0.5),
         inset 0 0 20px rgba(255, 255, 255, 0.3);
-    /* Animazione di rotazione infinita */
     animation: rotazione-medaglione 15s linear infinite;
 }
 
-/* Animazione di rotazione su se stessa (asse Y) */
 @keyframes rotazione-medaglione {
     from { transform: rotateY(0deg); }
     to { transform: rotateY(360deg); }
@@ -148,16 +83,21 @@ header { visibility: hidden; }
     max-width: 700px;
     margin: 30px auto;
     text-align: center;
-    position: relative; /* Per posizionare il "by fosforino" */
+    position: relative;
 }
 
-/* Caratteri corsivi e sobri per il ringraziamento finale */
+/* Caratteri corsivi per la firma */
 .firma-fosforino {
-    font-family: 'Aura', cursive; /* Usa un carattere corsivo elegante */
+    font-family: 'Aura', cursive, serif; 
     color: #a1887f;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     position: absolute;
-    bottom: 10px;
-    right: 20px;
+    bottom: 15px;
+    right: 25px;
     font-style: italic;
+}
+
+/* --- LOGO FISSO SIDEBAR --- */
+.app-logo-fixed {
+    mix-blend-mode: multiply;
 }
