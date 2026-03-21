@@ -1,0 +1,69 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+
+/* Sfondo carta globale */
+.stApp { 
+    background-color: #fdf5e6 !important;
+    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
+    color: #3e2723 !important; 
+    font-family: 'EB Garamond', serif !important; 
+}
+
+/* Sfondo Poeticamente - Velo Responsive */
+[data-testid="stAppViewContainer"] {
+    background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente.png");
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 80% auto; /* Si adatta a PC e Smartphone */
+}
+
+/* Assicura che l'header e il corpo non coprano lo sfondo */
+[data-testid="stHeader"], .main {
+    background: transparent !important;
+}
+
+/* FILIGRANA CENTRALE */
+.stMain::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw;
+    height: 60vh;
+    background-image: var(--logo-url); /* Usiamo una variabile CSS */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.15;
+    mix-blend-mode: multiply;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Logo fisso in alto a sinistra */
+.app-logo-fixed {
+    position: fixed;
+    top: 15px; 
+    left: 20px;
+    width: 60px;
+    z-index: 9999;
+    mix-blend-mode: multiply;
+}
+
+header { visibility: hidden; }
+[data-testid="stSidebarNav"] { display: none; }
+
+.poetic-title { 
+    font-family: 'Playfair Display', serif; 
+    font-size: 5rem; 
+    text-align: center; 
+    color: #3e2723; 
+    margin-top: 50px;
+}
+
+.stTextInput input {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    border: 1px solid #d7ccc8 !important;
+}
