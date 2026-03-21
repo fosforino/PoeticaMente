@@ -9,43 +9,52 @@
     font-family: 'EB Garamond', serif !important; 
 }
 
-/* Sfondo Poeticamente - Velo Responsive */
+/* SFONDO IMMERSIVO - Elimina il riquadro e sposta il logo a destra */
 [data-testid="stAppViewContainer"] {
-    background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente.png");
+    background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente.png") !important;
     background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 80% auto; 
+    background-position: center right !important; 
+    background-repeat: no-repeat !important;
+    background-size: 115% auto !important; /* Ingrandito per coprire i bordi */
 }
 
-/* Assicura che l'header e il corpo non coprano lo sfondo */
-[data-testid="stHeader"], .main {
-    background: transparent !important;
-}
-
-/* Nasconde elementi di default Streamlit */
+/* Header trasparente */
+[data-testid="stHeader"], .main { background: transparent !important; }
 header { visibility: hidden; }
 [data-testid="stSidebarNav"] { display: none; }
 
-/* --- STILE TITOLO LOGIN (Spostato a sinistra per non coprire il cervello) --- */
+/* TITOLO "ID" MINIMALISTA */
 .titolo-id {
     font-family: 'Playfair Display', serif;
     color: #3e2723;
     text-align: left !important;
-    padding-left: 2px; /* Allineato al bordo dei campi input */
-    margin-bottom: 20px;
-    margin-top: 20px;
-    font-size: 2rem;
+    margin-bottom: 5px;
+    font-size: 3.5rem;
+    letter-spacing: 8px;
     text-shadow: 2px 2px 4px rgba(255, 252, 240, 0.8);
 }
 
-/* Campi di input traslucidi per far vedere il logo sotto */
-.stTextInput input {
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    border: 1px solid #d7ccc8 !important;
+/* INPUT DINAMICI - Effetto "Respiro" */
+.stTextInput > div > div > input {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: none !important;
+    border-bottom: 1px solid #3e2723 !important;
+    border-radius: 0px !important;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1) !important;
+    width: 200px !important; /* Corto a riposo */
+    color: #3e2723 !important;
 }
 
-/* --- SEZIONE PREMIO SCENOGRAFICA (Medaglione 3D) --- */
+.stTextInput > div > div > input:focus {
+    width: 400px !important; /* Si espande al click */
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Checkbox e scritte trasparenti */
+.stCheckbox { background: transparent !important; }
+
+/* --- SEZIONE PREMIO 3D --- */
 .medaglione-3d-container {
     perspective: 1000px;
     width: 300px;
@@ -55,49 +64,33 @@ header { visibility: hidden; }
     justify-content: center;
     align-items: center;
 }
-
 .medaglione-bronzo-3d {
     width: 280px;
     height: 280px;
-    object-fit: cover;
     border-radius: 50%;
     border: 8px solid #b87333; 
-    box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.5),
-        inset 0 0 20px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     animation: rotazione-medaglione 15s linear infinite;
 }
-
 @keyframes rotazione-medaglione {
     from { transform: rotateY(0deg); }
     to { transform: rotateY(360deg); }
 }
-
-/* La pergamena con la dedica in pompa magna */
 .pergamena-dedica {
     background: rgba(255, 253, 248, 0.95);
     padding: 40px;
     border-radius: 20px;
-    border: 3px solid #d7ccc8;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border: 2px solid #d7ccc8;
     max-width: 700px;
     margin: 30px auto;
     text-align: center;
     position: relative;
 }
-
-/* Caratteri corsivi per la firma */
 .firma-fosforino {
     font-family: 'Aura', cursive, serif; 
     color: #a1887f;
-    font-size: 1.2rem;
     position: absolute;
     bottom: 15px;
     right: 25px;
     font-style: italic;
-}
-
-/* --- LOGO FISSO SIDEBAR --- */
-.app-logo-fixed {
-    mix-blend-mode: multiply;
 }
