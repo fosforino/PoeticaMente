@@ -1,28 +1,27 @@
 import streamlit as st
 
 def show():
-    # Titolo della pagina - Coerente con la SEO "Poeticamente"
     st.markdown("<h1 style='text-align: center; color: #3e2723; font-family: \"Playfair Display\";'>Il Tuo Riconoscimento</h1>", unsafe_allow_html=True)
     st.markdown("---")
 
-    # --- MOTORE 3D: IL SANDWICH DELLE TUE GRAFICHE ---
+    # --- MOTORE 3D CON NOMI FILE ALLINEATI A GITHUB ---
     st.markdown("""
         <div class="medaglione-3d-container">
             <div class="card-3d">
                 
                 <div class="faccia fronte">
-                    <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente_Fronte.png">
+                    <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente.png">
                 </div>
                 
                 <div class="faccia retro-immagine">
-                    <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente_Retro.png">
+                    <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente_retro.png">
                 </div>
                 
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # --- LA PERGAMENA DELLA DEDICA ---
+    # --- PERGAMENA DEDICA ---
     st.markdown("""
         <div class="pergamena-dedica">
             <p style="font-size: 1.3rem; line-height: 1.8; color: #5d4037;">
