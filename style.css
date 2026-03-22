@@ -1,20 +1,34 @@
-/* style.css - ARCHITETTURA STABILE E FUNZIONANTE */
+/* style.css - ARCHITETTURA PULITA E TRASPARENZA */
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
-.stApp { 
-    /* Usiamo la pergamena come sfondo fisso e dritto */
-    background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Texture_Pergamena.jpg") !important;
+/* 1. SFONDO PRINCIPALE (Il tuo fotomontaggio) */
+html, body, [data-testid="stAppViewContainer"], .stApp {
+    background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Sfondo_Fotomontaggio.jpg") !important;
     background-size: cover !important; 
     background-position: center !important; 
     background-attachment: fixed !important;
     background-repeat: no-repeat !important;
-    
-    /* Overlay leggero per ammorbidire la trama senza scurire troppo */
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    background-blend-mode: overlay;
+    background-color: transparent !important;
 }
 
-/* --- IL VORTICE (Dietro a tutto) --- */
+/* 2. KILLER DEI BLOCCHI BIANCHI */
+[data-testid="stVerticalBlock"], 
+[data-testid="stHeader"], 
+div[class*="st-emotion-cache"] {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* 3. TESTO (Inchiostro scuro) */
+h1, p, label, span, .stMarkdown {
+    color: #3e2723 !important;
+    font-family: 'EB Garamond', serif !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+}
+
+/* 4. VORTICE (Lettere che fluttuano) */
 .vortex-container {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
@@ -24,33 +38,20 @@
 .lettera-vortice {
     position: absolute;
     font-family: 'Playfair Display', serif;
-    color: rgba(62, 39, 35, 0.35); /* Inchiostro visibile ma leggero */
-    user-select: none;
+    font-weight: 600;
+    color: rgba(62, 39, 35, 0.4);
     pointer-events: none;
-    animation: fluttua-lento 25s infinite ease-in-out;
+    /* Versioni compatibili */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    animation: fluttua-gravita 25s infinite ease-in-out;
 }
 
-@keyframes fluttua-lento {
+@keyframes fluttua {
     0%, 100% { transform: translate(0,0) rotate(0deg); }
     50% { transform: translate(15px, 15px) rotate(10deg); }
 }
 
-/* --- IL MODULO (SOPRA LA PERGAMENA) --- */
-/* Creiamo un'area chiara per i tuoi input così sono leggibili */
-[data-testid="stVerticalBlock"] {
-    background: rgba(255, 253, 248, 0.7); /* Effetto carta sopra la pergamena */
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    margin-top: 20px;
-}
-
-/* Fix per i titoli e etichette */
-h1, label, p {
-    color: #3e2723 !important;
-    font-family: 'EB Garamond', serif !important;
-}
-
-/* Nascondi header Streamlit */
-[data-testid="stHeader"] { background: transparent !important; }
 header { visibility: hidden; }
