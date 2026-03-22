@@ -51,23 +51,26 @@ if not st.session_state.authenticated:
     with col_sinistra:
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         st.markdown("<h1 style='color: #3e2723; font-family: \"Playfair Display\";'>Poeticamente</h1>", unsafe_allow_html=True)
-        
-        # --- TITOLO MINIMALISTA E NON DISCRIMINATORIO ---
         st.markdown('<h2 class="titolo-id">ID</h2>', unsafe_allow_html=True)
         
-        nuovo_pseudo = st.text_input("Identità", placeholder="Chi bussa?")
-        password_segreta = st.text_input("Chiave d'Accesso", type="password", placeholder="••••••••")
-        accetto_codice = st.checkbox("Accetto il Codice d'Onore")
-        captcha_input = st.text_input("Dante: 'Nel mezzo del cammin di nostra...'", placeholder="Completa la riga")
+        # Inizio Form Dinamico: raggruppa gli input per non far "ballare" la pagina
+        with st.form("form_login"):
+            nuovo_pseudo = st.text_input("Identità", placeholder="Chi bussa?")
+            password_segreta = st.text_input("Chiave d'Accesso", type="password", placeholder="••••••••")
+            accetto_codice = st.checkbox("Accetto il Codice d'Onore")
+            captcha_input = st.text_input("Dante: 'Nel mezzo del cammin di nostra...'", placeholder="Completa la riga")
 
-        if st.button("🔓 Entra nello Scrittoio"):
-            if (nuovo_pseudo.strip() and password_segreta == "Ermetico_2026" and 
-                accetto_codice and captcha_input.strip().lower() == "vita"):
-                st.session_state.authenticated = True
-                st.session_state.utente = nuovo_pseudo.strip()
-                st.rerun()
-            else:
-                st.error("Accesso negato. Riprova.")
+            # Il tasto d'invio del form
+            submit = st.form_submit_button("🔓 Entra nello Scrittoio")
+
+            if submit:
+                if (nuovo_pseudo.strip() and password_segreta == "Ermetico_2026" and 
+                    accetto_codice and captcha_input.strip().lower() == "vita"):
+                    st.session_state.authenticated = True
+                    st.session_state.utente = nuovo_pseudo.strip()
+                    st.rerun()
+                else:
+                    st.error("Accesso negato. Riprova.")
     st.stop()
 
 # --- APP DOPO IL LOGIN ---
