@@ -62,6 +62,7 @@ if not st.session_state.authenticated:
         captcha_input = st.text_input("Dante: 'Nel mezzo del cammin di nostra...'", placeholder="Completa la riga", key="live_captcha")
 
         # Bottone d'ingresso classico (senza submit_button del form)
+        # ... fine del codice di login (dentro l'if not st.session_state.authenticated) ...
         if st.button("🔓 Entra nello Scrittoio"):
             if (nuovo_pseudo.strip() and password_segreta == "Ermetico_2026" and 
                 accetto_codice and captcha_input.strip().lower() == "vita"):
@@ -69,14 +70,16 @@ if not st.session_state.authenticated:
                 st.session_state.utente = nuovo_pseudo.strip()
                 st.rerun()
             else:
-                st.error("Accesso negato. Controlla i dati.")
-    st.stop()
+                st.error("Accesso negato.")
+    
+    st.stop() # <--- IL MURO: Se non è loggato, il codice si ferma qui.
 
-# --- APP DOPO IL LOGIN ---
+# --- APP DOPO IL LOGIN (Questo viene letto solo se sei loggato) ---
 page = st.sidebar.radio("Scegli la tua meta:", ["Home", "Scrittoio", "Bacheca", "Archivio", "Filosofamente", "Premio"])
 
 with st.sidebar:
-    st.image(LOGO_URL, width=120)
+    # Qui usiamo il nuovo file nitido che hai caricato
+    st.image("Icona.png", width=120) 
     st.markdown(f"<h2 style='text-align: center; color: #3e2723; font-family: \"Playfair Display\";'>Profilo:<br>{st.session_state.utente}</h2>", unsafe_allow_html=True)
     st.markdown("---")
     if st.button("Congeda il Profilo"):
