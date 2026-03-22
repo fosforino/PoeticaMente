@@ -1,18 +1,17 @@
-# pages/Premio.py - Versione Scrittoio Millenario con Pergamena Ruotata
+# pages/Premio.py
 import streamlit as st
 import random
 
-def genera_vortice_lettere(num_lettere=130):
-    """Genera l'HTML per il vortice di lettere casuali (Latine, Greche e Simboli)."""
-    alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZΩΨΦΣΠΛΔΓΘΞαβγδεζηθικλμνξοπρστυφχψω!?¿<>+=-*%"
+def genera_vortice_lettere(num_lettere=120):
+    """Genera l'HTML per il vortice di lettere (Inchiostro dinamico)"""
+    alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZΩΨΦΣΠΛΔΓΘΞαβγδεζηθικλμνξοπρστυφχψω"
     html_lettere = '<div class="vortex-container">'
-    
     for _ in range(num_lettere):
         char = random.choice(alfabeto)
         pos_x = random.uniform(0, 100)
         pos_y = random.uniform(0, 100)
         classe_dim = random.choice(['piccola', 'media', 'grande'])
-        durata_anim = random.uniform(20, 50) # Secondi per un'orbita completa
+        durata_anim = random.uniform(15, 35)
 
         html_lettere += f"""
             <div class="lettera-vortice {classe_dim}" 
@@ -24,48 +23,24 @@ def genera_vortice_lettere(num_lettere=130):
     return html_lettere
 
 def show():
-    # 1. INIETTIAMO IL VORTICE (Sfondo dinamico)
+    # 1. INIETTIAMO IL VORTICE (Fluttua sopra il tuo fotomontaggio)
     st.markdown(genera_vortice_lettere(), unsafe_allow_html=True)
 
-    # 2. TITOLO (Sopra il vortice)
-    # Abbiamo stilizzato il titolo via CSS con .titolo-id
-    st.markdown("<h1 class='titolo-id'>Il Tuo Riconoscimento</h1>", unsafe_allow_html=True)
-    st.markdown("---")
+    # 2. TITOLO (Ora fluttua direttamente sulla carta del fotomontaggio)
+    st.markdown("<h1 style='text-align: center;'>Il Tuo Riconoscimento</h1>", unsafe_allow_html=True)
+    
+    st.write("---")
 
-    # --- HTML FILIGRANA (MEDAGLIONE RETRO - STATICO E RUOTATO) ---
+    # 3. AREA TESTO (Semplice e pulita, la grafica è già nello sfondo)
     st.markdown("""
-        <div class="filigrana-retro">
-            <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente_retro.png">
-        </div>
-    """, unsafe_allow_html=True)
-
-    # --- HTML MEDAGLIONE 3D (FULCRO FLOTTANTE - SOLO FRONTE) ---
-    st.markdown("""
-        <div class="medaglione-3d-container">
-            <div class="card-3d">
-                
-                <div class="faccia fronte">
-                    <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/Poeticamente.png">
-                </div>
-                
-                </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # --- HTML PERGAMENA DEDICA (Contenuto statico) ---
-    st.markdown("""
-        <div class="pergamena-dedica">
-            <p style="font-size: 1.3rem; line-height: 1.8; color: #5d4037;">
-                <i>"A chi ha saputo trasformare il silenzio in inchiostro,<br>
-                e il pensiero in un'opera senza tempo."</i>
+        <div style="text-align: center; padding: 20px;">
+            <p style="font-size: 1.4rem; font-style: italic;">
+                "A chi ha saputo trasformare il silenzio in inchiostro,<br>
+                e il pensiero in un'opera senza tempo."
             </p>
-            <p style="font-size: 1.1rem; color: #795548; margin-top: 25px;">
-                Un riconoscimento da parte di chi crede nel valore<br>
-                <b>dell'Alchimia tra il Pensiero e il Verso.</b>
+            <p style="margin-top: 20px;">
+                <b>L'Alchimia tra il Pensiero e il Verso.</b>
             </p>
-            <div class="firma-fosforino">
-                fosforino
-            </div>
         </div>
     """, unsafe_allow_html=True)
 
