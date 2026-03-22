@@ -1,176 +1,56 @@
-/* style.css - ARCHITETTURA DEFINITIVA: SCROTTOIO ORIZZONTALE E FULCRO GRAVITAZIONALE */
+/* style.css - ARCHITETTURA STABILE E FUNZIONANTE */
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
 
-/* --- 1. BASE: LA TUA PERGAMENA RUOTATA DI 90° --- */
 .stApp { 
-    /* Carichiamo l'immagine originale JPG */
+    /* Usiamo la pergamena come sfondo fisso e dritto */
     background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Texture_Pergamena.jpg") !important;
-    background-size: contain !important; /* contain per non deformare, cover può tagliare */
+    background-size: cover !important; 
     background-position: center !important; 
-    background-attachment: fixed; 
+    background-attachment: fixed !important;
     background-repeat: no-repeat !important;
-
-    /* LA ROTAZIONE: Applica la rotazione direttamente al background */
-    transform: rotate(90deg);
     
-    /* Mix di colori per antichizzare e scurire, dando profondità */
-    background-color: #8d6e63 !important; 
-    background-blend-mode: multiply;
-
-    color: #3e2723 !important; /* Testo color inchiostro scuro */
-    font-family: 'EB Garamond', serif !important; 
+    /* Overlay leggero per ammorbidire la trama senza scurire troppo */
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-blend-mode: overlay;
 }
 
-/* --- 2. IL VORTICE DELLE LETTERE (INTANGIBILE E VISIBILE) --- */
+/* --- IL VORTICE (Dietro a tutto) --- */
 .vortex-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    z-index: 1; 
-    pointer-events: none; /* Le lettere non intercettano i click */
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0; pointer-events: none;
 }
 
 .lettera-vortice {
     position: absolute;
     font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    color: rgba(62, 39, 35, 0.2); /* Molto trasparente */
+    color: rgba(62, 39, 35, 0.35); /* Inchiostro visibile ma leggero */
     user-select: none;
-    -webkit-user-select: none;
-    backface-visibility: hidden;
     pointer-events: none;
-    animation: fluttua-gravita 20s ease-in-out infinite; 
+    animation: fluttua-lento 25s infinite ease-in-out;
 }
 
-.lettera-vortice.piccola { font-size: 1.2rem; opacity: 0.1; }
-.lettera-vortice.media { font-size: 2.5rem; opacity: 0.2; }
-.lettera-vortice.grande { font-size: 4rem; opacity: 0.05; }
-
-@keyframes fluttua-gravita {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(15px, -20px) rotate(5deg); }
-    50% { transform: translate(-15px, 15px) rotate(-5deg); }
-    75% { transform: translate(20px, 10px) rotate(3deg); }
+@keyframes fluttua-lento {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(15px, 15px) rotate(10deg); }
 }
 
-/* --- 3. FILIGRANA (MEDAGLIONE RETRO - STATICO) --- */
-.filigrana-retro {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 250px;
-    height: 250px;
-    z-index: 2; /* Sopra lo sfondo ma sotto il vortice */
-    opacity: 0.35; /* Molto trasparente */
-    
-    /* Centramento e rotazione per allinearsi */
-    transform: translate(-50%, -50%) rotate(90deg); 
-    mix-blend-mode: overlay; /* Si fonde con la texture della carta */
-}
-
-.filigrana-retro img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-/* --- 4. IL MEDAGLIONE 3D (FULCRO FLOTTANTE GRAVITAZIONALE) --- */
-.medaglione-3d-container {
-    z-index: 10; 
-    position: relative;
-    perspective: 1000px;
-    width: 300px;
-    height: 300px;
-    margin: -150px auto 50px auto; /* Sollevato sopra il modulo */
-    /* Effetto 'Salto' 3D rispetto alla pergamena */
-    filter: drop-shadow(0px 20px 40px rgba(0,0,0,0.6));
-}
-
-.card-3d {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    animation: rotazione-bussola 15s linear infinite; /* Più lenta */
-}
-
-.faccia {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.fronte { transform: rotateY(0deg); }
-
-.faccia img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-@keyframes rotazione-bussola {
-    from { transform: rotateY(0deg); }
-    to { transform: rotateY(360deg); }
-}
-
-/* --- 5. PERGAMENA ORIZZONTALE E MODULO --- */
-.titolo-id {
-    font-family: 'Playfair Display', serif;
-    color: #3e2723;
-    text-align: center;
-    margin-top: 50px;
-    font-size: 3rem;
-    letter-spacing: 5px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-}
-
-.pergamena-modulo {
-    background: rgba(255, 253, 248, 0.95);
-    padding: 60px 40px; /* Più spazio in orizzontale */
+/* --- IL MODULO (SOPRA LA PERGAMENA) --- */
+/* Creiamo un'area chiara per i tuoi input così sono leggibili */
+[data-testid="stVerticalBlock"] {
+    background: rgba(255, 253, 248, 0.7); /* Effetto carta sopra la pergamena */
+    padding: 30px;
     border-radius: 15px;
-    border: 1px solid #d7ccc8;
-    max-width: 800px; /* Più largo per lo stile orizzontale */
-    margin: 40px auto;
-    text-align: left; /* Testo allineato a sinistra */
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    z-index: 11;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-top: 20px;
 }
 
-/* Stilizzazione dei campi di input e pulsanti */
-[data-testid="stTextInput"], [data-testid="stButton"] {
-    margin-bottom: 25px;
-}
-
-[data-testid="stButton"] button {
-    background-color: #8d6e63 !important;
-    color: #fff !important;
+/* Fix per i titoli e etichette */
+h1, label, p {
+    color: #3e2723 !important;
     font-family: 'EB Garamond', serif !important;
-    border-radius: 5px;
 }
 
-.firma-fosforino {
-    font-family: 'Brush Script MT', cursive !important;
-    color: #a1887f;
-    position: absolute;
-    bottom: 15px;
-    right: 25px;
-    font-size: 1.8rem !important;
-}
-
-/* Pulizia UI Streamlit */
+/* Nascondi header Streamlit */
 [data-testid="stHeader"] { background: transparent !important; }
 header { visibility: hidden; }
-
-/* RIMOZIONE SCUDETTO ROSSO GITHUB DEFAULT STREAMLIT */
-div[data-testid="stGitHubIcon"] {
-    display: none !important;
-}
