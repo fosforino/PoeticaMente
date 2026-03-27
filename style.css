@@ -1,41 +1,39 @@
-/* style.css - VERSION 4.0 DEFINITIVA */
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500&family=Playfair+Display:wght@700&display=swap');
+/* style.css - Azzeramento e Pulizia Totale */
 
-/* Forza lo sfondo su tutto */
-.stApp {
-    background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Sfondo_Fotomontaggio.jpg") !important;
-    background-size: cover !important;
+/* 1. Reset forzato del body per nascondere scritte tecniche */
+html, body, [data-testid="stAppViewContainer"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* Killer per scritte fluttuanti */
+    color: black !important;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.2rem !important; /* Font leggibile ma non gigante */
+}
+
+/* 2. Sfondo Centrato e Pulito */
+[data-testid="stAppViewContainer"] {
+    background-image: url('assets/Fronte_3d.png') !important;
+    background-size: contain !important; /* Importante: contain per non sgranare */
+    background-position: center !important;
+    background-repeat: no-repeat !important;
     background-attachment: fixed !important;
 }
 
-/* UCCIDE LE SCRITTE TECNICHE (VW, VH, ANIMATION) */
-.vortex-container, .lettera-vortice, [style*="animation"], [style*="vw"], [style*="vh"] {
+/* 3. Nascondiamo TUTTO quello che è tecnico/residuo */
+[style*='animation'], .vortex-container, .theme-selector, [style*='opacity: 0'] {
     display: none !important;
     visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
 }
 
-/* TESTO GIGANTE E LEGGIBILE - Forza Nero su Bianco */
-p, span, label, li, div, .stMarkdown {
-    color: #000000 !important; /* Nero assoluto */
-    font-family: 'EB Garamond', serif !important;
-    font-size: 1.5rem !important; /* Molto più grande */
-    font-weight: 600 !important;
-    line-height: 1.6 !important;
-    text-shadow: 2px 2px 8px rgba(255,255,255,1), -2px -2px 8px rgba(255,255,255,1) !important;
-}
-
-/* TITOLI IMPONENTI */
-h1, h2, h3 {
-    font-family: 'Playfair Display', serif !important;
-    color: #3e2723 !important;
-    font-size: 3rem !important;
-    text-shadow: 3px 3px 6px rgba(255,255,255,0.8) !important;
-}
-
-/* SIDEBAR E INPUT */
-[data-testid="stSidebar"] { background-color: rgba(255,255,255,0.9) !important; }
-.stTextInput input, .stTextArea textarea {
-    font-size: 1.3rem !important;
-    background-color: white !important;
+/* 4. Pulizia del testo e dell'interfaccia */
+h1, h2, h3, p, label {
     color: black !important;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.7) !important; /* Leggibilità */
+}
+
+input {
+    border: 1px solid black !important;
+    background-color: white !important;
 }
