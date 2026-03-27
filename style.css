@@ -1,65 +1,41 @@
-/* style.css - ARCHITETTURA PULITA E TRASPARENZA */
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+/* style.css - VERSION 4.0 DEFINITIVA */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500&family=Playfair+Display:wght@700&display=swap');
 
-/* 1. SFONDO PRINCIPALE (Il tuo fotomontaggio) */
-html, body, [data-testid="stAppViewContainer"], .stApp {
+/* Forza lo sfondo su tutto */
+.stApp {
     background-image: url("https://raw.githubusercontent.com/fosforino/Poeticamente/main/Sfondo_Fotomontaggio.jpg") !important;
-    background-size: cover !important; 
-    background-position: center !important; 
+    background-size: cover !important;
     background-attachment: fixed !important;
-    background-repeat: no-repeat !important;
-    background-color: transparent !important;
 }
 
-/* 2. KILLER DEI BLOCCHI BIANCHI (TRASPARENZA) */
-[data-testid="stVerticalBlock"], 
-[data-testid="stHeader"], 
-div[class*="st-emotion-cache"] {
-    background-color: transparent !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
+/* UCCIDE LE SCRITTE TECNICHE (VW, VH, ANIMATION) */
+.vortex-container, .lettera-vortice, [style*="animation"], [style*="vw"], [style*="vh"] {
+    display: none !important;
+    visibility: hidden !important;
 }
 
-/* --- NUOVO: CUCITURA PER ICONE NITIDE --- */
-/* Questa regola dice: "Sii trasparente ovunque, TRANNE che sulle immagini" */
-[data-testid="stImage"] img {
-    opacity: 1 !important;
-    filter: none !important;
-    background-color: transparent !important;
-}
-
-/* 3. TESTO (Inchiostro scuro) */
-h1, p, label, span, .stMarkdown {
-    color: #3e2723 !important;
+/* TESTO GIGANTE E LEGGIBILE - Forza Nero su Bianco */
+p, span, label, li, div, .stMarkdown {
+    color: #000000 !important; /* Nero assoluto */
     font-family: 'EB Garamond', serif !important;
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+    font-size: 1.5rem !important; /* Molto più grande */
+    font-weight: 600 !important;
+    line-height: 1.6 !important;
+    text-shadow: 2px 2px 8px rgba(255,255,255,1), -2px -2px 8px rgba(255,255,255,1) !important;
 }
 
-/* 4. VORTICE (Lettere che fluttuano) */
-.vortex-container {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 0; pointer-events: none;
+/* TITOLI IMPONENTI */
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif !important;
+    color: #3e2723 !important;
+    font-size: 3rem !important;
+    text-shadow: 3px 3px 6px rgba(255,255,255,0.8) !important;
 }
 
-.lettera-vortice {
-    position: absolute;
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    color: rgba(62, 39, 35, 0.4);
-    pointer-events: none;
-    /* Versioni compatibili */
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    animation: fluttua-gravita 25s infinite ease-in-out;
+/* SIDEBAR E INPUT */
+[data-testid="stSidebar"] { background-color: rgba(255,255,255,0.9) !important; }
+.stTextInput input, .stTextArea textarea {
+    font-size: 1.3rem !important;
+    background-color: white !important;
+    color: black !important;
 }
-
-@keyframes fluttua {
-    0%, 100% { transform: translate(0,0) rotate(0deg); }
-    50% { transform: translate(15px, 15px) rotate(10deg); }
-}
-
-header { visibility: hidden; }

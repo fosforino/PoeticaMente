@@ -55,7 +55,8 @@ def show():
         nome_poeta = st.session_state.utente
         
         try:
-            res = supabase.table("Opere").select("*").eq("autore", nome_poeta).order("created_at", desc=True).execute()
+            # Nota le doppie virgolette f"..." e le singole '{...}' dentro
+            res = supabase.table("Opere").select("*").filter("autore", "eq", f"{st.session_state.utente}").order("created_at", desc=True).execute()
             opere = res.data if res.data else []
 
             if opere:

@@ -5,6 +5,16 @@
 venv/
 .venv/
 
-# Cache e residui Python 3.14
+# Cache e residui Python
 __pycache__/
 *.pyc
+
+# --- AGGIUNTE PER POETICAMENTE ---
+# Escludi il file AVI temporaneo (pesante e non necessario su GitHub)
+temp_render.avi
+
+# Escludi file di log di MoviePy o FFmpeg se presenti
+*.log
+
+# Opzionale: se vuoi che il video venga generato ogni volta e non caricato
+# assets/medaglia_3d_perfetta.mp4

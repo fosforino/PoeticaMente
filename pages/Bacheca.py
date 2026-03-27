@@ -106,7 +106,8 @@ def show():
     supabase = create_client(url, key)
 
     try:
-        res = supabase.table("Opere").select("*").eq("pubblica", True).order("created_at", desc=True).execute()
+        # Nota le doppie virgolette f"..." e le singole '{...}' dentro
+        res = supabase.table("Opere").select("*").filter("autore", "eq", f"{st.session_state.utente}").order("created_at", desc=True).execute()
         poemi = res.data if res.data else []
 
         if not poemi:

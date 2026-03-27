@@ -68,7 +68,8 @@ def show():
         st.markdown(f"<h1 style='text-align: center; color: #3e2723;'>✒️ Lo Scrittoio di {nome_poeta}</h1>", unsafe_allow_html=True)
 
         try:
-            res = supabase.table("Opere").select("*").eq("autore", nome_poeta).order("created_at", desc=True).execute()
+            # Nota le doppie virgolette f"..." e le singole '{...}' dentro
+            res = supabase.table("Opere").select("*").filter("autore", "eq", f"{st.session_state.utente}").order("created_at", desc=True).execute()  
             opere = res.data if res.data else []
         except Exception as e:
             st.error(f"Errore recupero: {e}")
