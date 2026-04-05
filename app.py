@@ -1,84 +1,92 @@
 import streamlit as st
 import os
+from supabase import create_client
+
+# =========================
+# IMPORT PAGINE
+# =========================
 from pages import Home, Scrittoio, Bacheca, Archivio, Filosofamente, Premio
 
-# 1. Configurazione Pagina (Layout Wide e Titolo)
-st.set_page_config(page_title="Poeticamente", layout="wide", initial_sidebar_state="collapsed")
+# =========================
+# CONFIG PAGINA
+# =========================
+st.set_page_config(
+    page_title="Poeticamente",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 
-# 2. Blindaggio Estetico: Uccidiamo i menu di sistema e i testi fantasma
-st.markdown("""
-    <style>
-        /* Nasconde il menu in alto a destra (Deploy, Rerun, etc.) */
-        #MainMenu, header, footer {visibility: hidden; display: none !important;}
-        
-        /* Nasconde il selettore di contrasto e scritte tecniche residue */
-        .stAppDeployButton, .stAppToolbar, [data-testid="stStatusWidget"] {display: none !important;}
-        
-        /* Forza il colore nero per i testi per contrastare col medaglione */
-        .stMarkdown, p, label, h1, h2, h3 {
-            color: #000000 !important;
-            font-weight: 600 !important;
-        }
+# =========================
+# CONNESSIONE SUPABASE
+# =========================
+url = st.secrets["SUPABASE_URL"]
+key = st.secrets["SUPABASE_KEY"]
+supabase = create_client(url, key)
 
-        /* Pulizia dei box di input per il login */
-        div[data-baseweb="input"] {
-            background-color: rgba(255, 255, 255, 0.8) !important;
-            border-radius: 10px !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# =========================
+# SESSIONE
+# =========================
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
 
-# 3. Caricamento del tuo style.css (quello che abbiamo pulito prima)
-def load_css():
+# =========================
+# LOGICA DI NAVIGAZIONE
+# =========================
+
+# 1. SE NON AUTENTICATO: MOSTRA LA SOGLIA
+if not st.session_state.authenticated:
+
+    # Caricamento CSS per l'estetica del medaglione
     if os.path.exists("style.css"):
         with open("style.css", "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
+    # Medaglione + Testi
+    st.markdown("""
+        <div class="medaglione-container">
+            <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/assets/Fronte_3d.png" 
+                 class="medaglione-immagine">
+        </div>
+        <h1 class="titolo-soglia">SOGLIA</h1>
+        <div class="sottotitolo-opera">PENSIERO ED OPERA</div>
+        <div class="citazione-solenne">
+            "La vera vita è molto breve.<br>
+            L'esistere è un'altra cosa."
+        </div>
+    """, unsafe_allow_html=True)
 
-load_css()
+    # Input Utente
+    u = st.text_input("L'Identità", placeholder="Chi bussa?", key="u")
+    p = st.text_input("La Chiave", type="password", placeholder="La firma...", key="p")
+    w = st.text_input("La Parola d'Ordine", type="password", placeholder="Sussurra...", key="w")
 
-# --- LOGICA DI ACCESSO ---
-if not st.session_state.authenticated:
-    # Nasconde la sidebar se non sei loggato
-    st.markdown('<style>[data-testid="stSidebar"]{display:none;}</style>', unsafe_allow_html=True)
+    # Bottone Login - QUERY BLINDATA ANTI-PGRST100
+    if st.button("VARCA IL PORTALE", width="stretch"):
+        if u and p and w:
+            try:
+                # Esecuzione query senza filtri "Filters.EQ" per evitare crash
+                res = supabase.table("Opere").select("autore") \
+                    .eq("autore", str(u).strip()) \
+                    .eq("codice_firma", str(p).strip()) \
+                    .eq("parola_ordine", str(w).strip()) \
+                    .execute()
+                
+                if res.data and len(res.data) > 0:
+                    st.session_state.authenticated = True
+                    st.session_state.utente = u
+                    st.rerun()
+                else:
+                    st.error("Il silenzio non risponde. Chiavi errate.")
+            except Exception as e:
+                st.error(f"Errore tecnico: {e}")
+        else:
+            st.warning("La Soglia richiede che ogni campo sia colmato.")
+
+# 2. SE AUTENTICATO: MOSTRA L'APP REALE
+else:
+    # Qui il modulo di login sparisce e parte la tua Home
+    Home.show() 
+    # Se la tua Home usa .run() invece di .show(), usa Home.run()
     
-    _, col, _ = st.columns([0.5, 1, 0.5])
-    with col:
-        st.markdown("<br><br>", unsafe_allow_html=True) # Spazio per non coprire il centro del medaglione
-        st.title("Poeticamente")
-        u = st.text_input("Identità", placeholder="Inserisci il tuo nome...")
-        p = st.text_input("Chiave", type="password", placeholder="La tua parola ermetica...")
-        
-        if st.button("Entra"):
-            if p == "Ermetico_2026":
-                st.session_state.authenticated = True
-                st.session_state.utente = u
-                st.rerun()
-            else:
-                st.error("Chiave errata.")
-    st.stop()
-
-# --- INTERFACCIA POST-LOGIN ---
-with st.sidebar:
-    st.title(f"✒️ {st.session_state.utente}")
-    st.markdown("---")
-    page = st.radio("Naviga tra le stanze:", ["Home", "Scrittoio", "Bacheca", "Archivio", "Filosofamente", "Premio"])
-    st.markdown("---")
-    if st.button("Chiudi Portale"):
-        st.session_state.authenticated = False
-        st.rerun()
-
-# Mapping delle pagine
-pagine = {
-    "Home": Home.show, 
-    "Scrittoio": Scrittoio.show, 
-    "Bacheca": Bacheca.show, 
-    "Archivio": Archivio.show, 
-    "Filosofamente": Filosofamente.show, 
-    "Premio": Premio.show
-}
-
-# Esecuzione della pagina selezionata
-pagine[page]()
+    # Opzionale: un messaggio di successo temporaneo
+    # st.toast(f"Benvenuto, {st.session_state.utente}")

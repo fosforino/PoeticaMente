@@ -1,39 +1,174 @@
-/* style.css - Azzeramento e Pulizia Totale */
-
-/* 1. Reset forzato del body per nascondere scritte tecniche */
-html, body, [data-testid="stAppViewContainer"] {
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important; /* Killer per scritte fluttuanti */
-    color: black !important;
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 1.2rem !important; /* Font leggibile ma non gigante */
-}
-
-/* 2. Sfondo Centrato e Pulito */
+/* ========================= */
+/* 1. Sfondo */
+/* ========================= */
 [data-testid="stAppViewContainer"] {
-    background-image: url('assets/Fronte_3d.png') !important;
-    background-size: contain !important; /* Importante: contain per non sgranare */
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-attachment: fixed !important;
+    background-color: #f4ecd8 !important;
+    background-image: none !important;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
 }
 
-/* 3. Nascondiamo TUTTO quello che è tecnico/residuo */
-[style*='animation'], .vortex-container, .theme-selector, [style*='opacity: 0'] {
+/* ========================= */
+/* 2. Contenitore Medaglione */
+/* ========================= */
+div.stMarkdown div.medaglione-container {
+    position: fixed;
+    top: 50%;
+    left: 30%; /* 🔥 leggermente più centrale */
+    transform: translateY(-50%);
+    
+    width: 60vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ========================= */
+/* 3. Medaglione con LUCE */
+/* ========================= */
+/* 3. Medaglione con LUCE migliorato */
+img.medaglione-immagine {
+    max-height: 85vh;
+    width: auto;
+    object-fit: contain;
+    border-radius: 70%;
+
+    /* 🔥 Ombra e bagliore dorato più evidenti */
+    box-shadow: 
+        0 0 50px 15px rgba(241, 188, 10, 0.5),  /* bagliore dorato più intenso */
+        0 0 80px 30px rgba(0, 0, 0, 0.25),    /* ombra morbida nera */
+        0 0 120px 60px rgba(0, 0, 0, 0.0);
+
+    /* sfuma il bordo e maschera il bianco */
+    filter: 
+        brightness(0.9) 
+        contrast(1.15) 
+        saturate(1.2)
+        drop-shadow(0 0 25px rgba(0,0,0,0.4));
+
+    position: relative;
+    z-index: 2;
+
+    margin-right: 0; 
+}
+
+/* ========================= */
+/* 4. Nascondi UI Streamlit */
+/* ========================= */
+header, footer, .stAppDeployButton, #MainMenu, 
+[data-testid="stHeader"], 
+[data-testid="stSidebar"] {
     display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    width: 0 !important;
 }
 
-/* 4. Pulizia del testo e dell'interfaccia */
-h1, h2, h3, p, label {
-    color: black !important;
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.7) !important; /* Leggibilità */
+/* ========================= */
+/* 5. Area contenuti */
+/* ========================= */
+.main .block-container {
+    padding-top: 60px !important; 
+    padding-left: 40px !important; 
+    max-width: 340px !important;
+
+    position: relative;
+    z-index: 5;
+}
+
+/* ========================= */
+/* 6. Testi */
+/* ========================= */
+.titolo-soglia {
+    font-family: 'Cinzel', serif !important;
+    color: #1a110f !important;
+    font-size: 3.4em !important;
+    letter-spacing: 6px !important;
+    margin: 0 !important;
+}
+
+.sottotitolo-opera {
+    font-family: 'Playfair Display', serif !important;
+    color: #8c6d46 !important;
+    font-size: 1.2em !important;
+    font-style: italic;
+    margin-top: -10px !important;
+}
+
+.citazione-solenne {
+    border-left: 3px solid #8c6d46;
+    padding-left: 15px !important;
+    margin: 30px 0 !important;
+    color: #3e2723 !important;
+    font-family: 'Georgia', serif !important;
+    font-size: 0.95em !important;
+    line-height: 1.6;
+}
+
+/* ========================= */
+/* 7. Input */
+/* ========================= */
+div[data-testid="stTextInput"], .stButton {
+    max-width: 240px !important; 
 }
 
 input {
-    border: 1px solid black !important;
-    background-color: white !important;
+    border: none !important;
+    border-bottom: 1px solid #8c6d46 !important;
+    background-color: transparent !important;
+    color: #1a110f !important;
+}
+
+/* ========================= */
+/* 8. Bottone */
+/* ========================= */
+.stButton>button {
+    background-color: #1a110f !important;
+    color: #d4af37 !important;
+    border: 1px solid #d4af37 !important;
+    font-family: 'Cinzel', serif !important;
+    letter-spacing: 2px;
+    height: 45px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.stButton>button:hover {
+    background-color: #d4af37 !important;
+    color: #1a110f !important;
+    border: 1px solid #1a110f !important;
+}
+
+/* ========================= */
+/* 📱 RESPONSIVE MOBILE */
+/* ========================= */
+@media (max-width: 768px) {
+
+    div.stMarkdown div.medaglione-container {
+        position: fixed;
+        top: 60%;
+        left: 50%; /* centrato su mobile */
+        transform: translate(-50%, -50%);
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+    }
+
+    img.medaglione-immagine {
+        max-height: 50vh;
+        margin-right: 0;
+        opacity: 0.25; /* diventa sfondo elegante */
+    }
+
+    .main .block-container {
+        max-width: 90% !important;
+        padding-left: 20px !important;
+    }
+
+    .titolo-soglia {
+        font-size: 2.5em !important;
+    }
 }
