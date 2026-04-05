@@ -3,38 +3,40 @@ import os
 import base64
 
 def get_base64_image(image_path):
+    """Restituisce il contenuto base64 di un'immagine se esiste."""
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
     return None
 
 def apply_aesthetic_style():
-    """Applica l'estetica 'Parchment & Ink' ottimizzata per la leggibilità."""
-    path_icona = "Poeticamente.png"
+    """Applica lo stile 'Parchment & Ink' ottimizzato per leggibilità e coerenza con l'app."""
+    path_icona = "assets/Icona.png"  # Coerenza con cartella assets
     img_base64 = get_base64_image(path_icona)
-    img_html = ""
-    
-    if img_base64:
-        img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-home">'
+    img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-home">' if img_base64 else ""
 
     st.markdown(
         f"""
         <style>
-        /* Testo base più grande e arioso */
+        /* Stile base app */
         .stApp {{
             color: #3e2723;
             line-height: 1.8;
         }}
 
+        /* Watermark Home */
         .bg-watermark-home {{
             position: fixed;
             top: 55%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 65vw; opacity: 0.06;
+            width: 65vw;
+            opacity: 0.06;
             filter: blur(10px);
-            z-index: -1; pointer-events: none;
+            z-index: -1;
+            pointer-events: none;
         }}
 
+        /* Titolo e sottotitolo */
         .poetic-title-home {{ 
             font-family: 'Playfair Display', serif; 
             font-size: 4rem; color: #3e2723; 
@@ -50,12 +52,12 @@ def apply_aesthetic_style():
             margin-bottom: 50px;
         }}
 
-        /* Box trasparenti ma leggibili per non coprire lo sfondo */
+        /* Box trasparenti leggibili */
         .feature-box {{
             background-color: rgba(255, 250, 240, 0.4);
             padding: 25px; border-radius: 8px;
             border-left: 4px solid #c19a6b;
-            margin-bottom: 25px; /* Più spazio tra i box */
+            margin-bottom: 25px;
             color: #3e2723;
             font-size: 1.25rem;
             line-height: 1.6;
@@ -69,6 +71,7 @@ def apply_aesthetic_style():
             margin-bottom: 8px;
         }}
 
+        /* Regole del Poeta */
         .rules-card {{
             background-color: rgba(244, 236, 224, 0.7);
             padding: 25px; border-radius: 4px;
@@ -77,6 +80,7 @@ def apply_aesthetic_style():
             font-size: 1.2rem;
         }}
 
+        /* Messaggio status utente */
         .status-msg {{
             text-align: center; padding: 20px; 
             border-radius: 6px; 

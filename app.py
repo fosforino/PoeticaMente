@@ -1,20 +1,24 @@
 import streamlit as st
 import os
 from supabase import create_client
+import importlib
 
 # =========================
-# IMPORT PAGINE
-# =========================
-from pages import Home, Scrittoio, Bacheca, Archivio, Filosofamente, Premio
-
-# =========================
-# CONFIG PAGINA
+# CONFIGURAZIONE PAGINA
 # =========================
 st.set_page_config(
     page_title="Poeticamente",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# =========================
+# IMPORT PAGINE
+# =========================
+try:
+    from pages import Home, Scrittoio, Bacheca, Filosofamente, Archivio, Premio
+except ImportError as e:
+    st.error(f"Errore di importazione: {e}")
 
 # =========================
 # CONNESSIONE SUPABASE
@@ -28,20 +32,20 @@ supabase = create_client(url, key)
 # =========================
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
+if "utente" not in st.session_state:
+    st.session_state.utente = ""
 
 # =========================
-# LOGICA DI NAVIGAZIONE
+# LOGIN / SOGLIA
 # =========================
-
-# 1. SE NON AUTENTICATO: MOSTRA LA SOGLIA
 if not st.session_state.authenticated:
 
-    # Caricamento CSS per l'estetica del medaglione
+    # Carica CSS esterno se presente
     if os.path.exists("style.css"):
         with open("style.css", "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-    # Medaglione + Testi
+    # Schermata poetica iniziale
     st.markdown("""
         <div class="medaglione-container">
             <img src="https://raw.githubusercontent.com/fosforino/Poeticamente/main/assets/Fronte_3d.png" 
@@ -55,38 +59,65 @@ if not st.session_state.authenticated:
         </div>
     """, unsafe_allow_html=True)
 
-    # Input Utente
-    u = st.text_input("L'Identità", placeholder="Chi bussa?", key="u")
-    p = st.text_input("La Chiave", type="password", placeholder="La firma...", key="p")
-    w = st.text_input("La Parola d'Ordine", type="password", placeholder="Sussurra...", key="w")
+    # Input utente
+    u = st.text_input("L'Identità", placeholder="Chi bussa?", key="input_u")
+    p = st.text_input("La Chiave", type="password", placeholder="La firma...", key="input_p")
 
-    # Bottone Login - QUERY BLINDATA ANTI-PGRST100
-    if st.button("VARCA IL PORTALE", width="stretch"):
-        if u and p and w:
+    if st.button("VARCA IL PORTALE", use_container_width=True):
+        if u and p:
             try:
-                # Esecuzione query senza filtri "Filters.EQ" per evitare crash
+                user_val = str(u).strip()
+                pass_val = str(p).strip()
+                # Controllo credenziali
                 res = supabase.table("Opere").select("autore") \
-                    .eq("autore", str(u).strip()) \
-                    .eq("codice_firma", str(p).strip()) \
-                    .eq("parola_ordine", str(w).strip()) \
+                    .eq("autore", user_val) \
+                    .eq("codice_firma", pass_val) \
                     .execute()
-                
+
                 if res.data and len(res.data) > 0:
                     st.session_state.authenticated = True
-                    st.session_state.utente = u
+                    st.session_state.utente = user_val
                     st.rerun()
                 else:
                     st.error("Il silenzio non risponde. Chiavi errate.")
             except Exception as e:
-                st.error(f"Errore tecnico: {e}")
+                st.error(f"Errore tecnico di connessione: {e}")
         else:
             st.warning("La Soglia richiede che ogni campo sia colmato.")
 
-# 2. SE AUTENTICATO: MOSTRA L'APP REALE
+# =========================
+# APP AUTENTICATA
+# =========================
 else:
-    # Qui il modulo di login sparisce e parte la tua Home
-    Home.show() 
-    # Se la tua Home usa .run() invece di .show(), usa Home.run()
-    
-    # Opzionale: un messaggio di successo temporaneo
-    # st.toast(f"Benvenuto, {st.session_state.utente}")
+    # Mostra il benvenuto solo una volta
+    if "welcome_shown" not in st.session_state:
+        st.toast(f"Benvenuto, {st.session_state.utente}", icon="✨")
+        st.session_state.welcome_shown = True
+
+    # Menu laterale
+    menu = st.sidebar.selectbox(
+        "📂 Navigazione",
+        ["Home", "Scrittoio", "Bacheca", "Filosofamente", "Archivio", "Premio"]
+    )
+
+    # =========================
+    # RICARICA PAGINA DINAMICAMENTE
+    # =========================
+    if menu == "Home":
+        importlib.reload(Home)
+        Home.show()
+    elif menu == "Scrittoio":
+        importlib.reload(Scrittoio)
+        Scrittoio.show()
+    elif menu == "Bacheca":
+        importlib.reload(Bacheca)
+        Bacheca.show()
+    elif menu == "Filosofamente":
+        importlib.reload(Filosofamente)
+        Filosofamente.show()
+    elif menu == "Archivio":
+        importlib.reload(Archivio)
+        Archivio.show()
+    elif menu == "Premio":
+        importlib.reload(Premio)
+        Premio.show()

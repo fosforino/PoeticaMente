@@ -5,6 +5,7 @@ import os
 import base64
 import json
 
+# Funzioni ausiliarie
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -27,7 +28,7 @@ def genera_pdf(titolo, categoria, contenuto, autore):
     return pdf.output(dest='S').encode('latin-1')
 
 def show():
-    # Usiamo l'icona standard per lo Scrittoio
+    # Watermark Scrittoio
     path_icona = "Poeticamente.png"
     img_base64 = get_base64_image(path_icona)
     img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-scrittoio">' if img_base64 else ""
@@ -42,7 +43,6 @@ def show():
             position: fixed; top: 50%; left: 55%; transform: translate(-50%, -50%); 
             width: 50vw; opacity: 0.05; filter: blur(12px); z-index: -1; pointer-events: none; 
         }}
-        
         .stTextArea textarea {{ 
             border: 1px solid #c19a6b !important; 
             border-radius: 5px !important; 
@@ -50,7 +50,6 @@ def show():
             font-size: 1.3rem !important; 
             color: #3e2723 !important; 
         }}
-        
         div.stButton > button {{ border: none !important; color: white !important; font-weight: bold !important; padding: 0.6em 1.2em !important; border-radius: 8px !important; text-transform: uppercase; }}
         div.stButton > button[key="btn_salva"] {{ background: #2e7d32 !important; box-shadow: 0 4px 0 #1b5e20; }}
         div.stButton > button[key="btn_stampa"] {{ background: #455a64 !important; box-shadow: 0 4px 0 #263238; }}
@@ -68,7 +67,6 @@ def show():
         st.markdown(f"<h1 style='text-align: center; color: #3e2723;'>✒️ Lo Scrittoio di {nome_poeta}</h1>", unsafe_allow_html=True)
 
         try:
-            # Nota le doppie virgolette f"..." e le singole '{...}' dentro
             res = supabase.table("Opere").select("*").filter("autore", "eq", f"{st.session_state.utente}").order("created_at", desc=True).execute()  
             opere = res.data if res.data else []
         except Exception as e:
