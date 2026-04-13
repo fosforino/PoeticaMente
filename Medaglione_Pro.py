@@ -8,7 +8,7 @@ from moviepy import VideoFileClip, AudioFileClip
 
 # === CONFIGURAZIONE ORIGINALE ===
 ASSETS_DIR = "assets"
-image_fronte_path = os.path.join(ASSETS_DIR, "Fronte_3d.png") 
+image_fronte_path = os.path.join(ASSETS_DIR, "Fronte.png") 
 image_retro_path = os.path.join(ASSETS_DIR, "Retro_3d.png")
 audio_file = os.path.join(ASSETS_DIR, "musica_colossal.mp3")
 output_video = os.path.join(ASSETS_DIR, "medaglia_v2.mp4")
@@ -17,6 +17,7 @@ temp_video_avi = "temp_render.avi"
 width, height = 1920, 1080
 fps = 30
 duration = 20  # Video più rapido e dinamico
+
 total_frames = fps * duration
 
 if os.path.exists(output_video):
@@ -46,7 +47,7 @@ img_retro, _, _ = prepare_image(image_retro_path)
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
 video = cv2.VideoWriter(temp_video_avi, fourcc, fps, (width, height))
 
-print(f"🚀 Renderizzazione Medaglione Poeticamente in corso...")
+print(f"🚀 Renderizzazione Medaglione PoeticaMente in corso...")
 
 for i in range(total_frames):
     frame = np.zeros((height, width, 3), dtype=np.uint8)

@@ -1,11 +1,13 @@
 import streamlit as st
-from supabase import create_client
 from fpdf import FPDF
 import os
 import base64
-import json
+import io
+import json  # compatibilità futura
 
+# =========================
 # Funzioni ausiliarie
+# =========================
 def get_base64_image(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -25,30 +27,31 @@ def genera_pdf(titolo, autore, testo):
     pdf.multi_cell(0, 10, testo.encode('latin-1', 'replace').decode('latin-1'))
     return pdf.output(dest='S').encode('latin-1')
 
-def apply_sacred_style():
-    path_icona_filo = "Icona_Filosofamente_Test.png"
-    if not os.path.exists(path_icona_filo):
-        path_icona_filo = "Poeticamente.png"
-    img_base64 = get_base64_image(path_icona_filo)
-    img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-filosofia">' if img_base64 else ""
+# =========================
+# Stile e sfondo
+# =========================
+def apply_sacred_style(bg_image=None):
+    if bg_image is None:
+        bg_image = "assets/Fronte_3d.png"  # default
+
+    img_base64 = get_base64_image(bg_image)
+    img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark">' if img_base64 else ""
 
     st.markdown(f"""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
         .stApp {{
             background-color: #fdf5e6;
-            background-image: 
-                url("https://www.transparenttextures.com/patterns/marble-similar.png"),
-                url("https://www.transparenttextures.com/patterns/handmade-paper.png");
         }}
-        .bg-watermark-filosofia {{
+        .bg-watermark {{
             position: fixed; top:50%; left:50%;
             transform: translate(-50%, -50%);
-            width:45vw; opacity:0.06; filter: grayscale(100%);
+            width: 80vw; opacity:0.06; filter: grayscale(100%);
             z-index:-1; pointer-events:none;
         }}
-        .titolo-filosofamente {{
-            font-family: 'Cinzel', serif; text-align:center; color:#1a1a1a; font-size:3.5rem; letter-spacing:8px; margin-top:20px; text-transform:uppercase;
+        .titolo-filosofaMente {{
+            font-family: 'Cinzel', serif; text-align:center; color:#1a1a1a; font-size:3.5rem;
+            letter-spacing:8px; margin-top:20px; text-transform:uppercase;
         }}
         .marmo-focus {{
             background: rgba(255,255,255,0.6);
@@ -57,8 +60,11 @@ def apply_sacred_style():
             padding:50px;
             border-radius:4px;
             box-shadow:0 20px 40px rgba(0,0,0,0.05);
-            text-align:center; margin-top:30px; min-height:350px;
-            display:flex; flex-direction:column; justify-content:center; position:relative; z-index:1;
+            text-align:center;
+            margin-top:30px;
+            min-height:350px;
+            display:flex; flex-direction:column; justify-content:center;
+            position:relative; z-index:1;
         }}
         .nome-autore {{ font-family:'Cinzel', serif; font-size:2.2rem; color:#5d4037; margin-bottom:5px; }}
         .opera-unica {{ font-family:'Cinzel', serif; font-size:0.9rem; color:#8d6e63; margin-bottom:25px; text-transform:uppercase; letter-spacing:2px; }}
@@ -67,11 +73,28 @@ def apply_sacred_style():
         {img_html}
     """, unsafe_allow_html=True)
 
+# =========================
+# Main show()
+# =========================
 def show():
-    apply_sacred_style()
-    st.markdown("<div class='titolo-filosofamente'>Filosofamente</div>", unsafe_allow_html=True)
+    st.markdown("<div class='titolo-filosofaMente'>FilosofaMente</div>", unsafe_allow_html=True)
 
-    # Dizionario filosofico
+    # Sezione per cambiare sfondo
+    st.subheader("Sfondo personale (opzionale)")
+    uploaded_file = st.file_uploader("Carica un'immagine", type=['png','jpg','jpeg'])
+    link_image = st.text_input("Oppure inserisci un link diretto all'immagine")
+    bg_image = None
+    if uploaded_file:
+        bytes_data = uploaded_file.read()
+        bg_image = f"temp_bg.png"
+        with open(bg_image, "wb") as f:
+            f.write(bytes_data)
+    elif link_image:
+        bg_image = link_image
+
+    apply_sacred_style(bg_image)
+
+    # Dizionario filosofi
     filosofi = {
         "Socrate": {"opera": "Apologia", "testo": "L'unica vera sapienza è sapere di non sapere. Una vita senza ricerca non è degna di essere vissuta."},
         "Marx": {"opera": "Il Capitale", "testo": "La filosofia non ha mai fatto altro che interpretare il mondo; si tratta di trasformarlo."},
@@ -79,11 +102,8 @@ def show():
         "Hegel": {"opera": "Fenomenologia dello Spirito", "testo": "Ciò che è razionale è reale, e ciò che è reale è razionale."},
         "Schopenhauer": {"opera": "Il mondo come volontà e rappresentazione", "testo": "La vita è un pendolo che oscilla tra dolore e noia."},
         "Nietzsche": {"opera": "Così parlò Zarathustra", "testo": "Bisogna avere ancora un caos dentro di sé per partorire una stella danzante."},
-        "Platone": {"opera": "Simposio", "testo": "Al tocco dell'amore, ognuno diventa poeta."}}
-    
-    url = st.secrets["SUPABASE_URL"]
-    key = st.secrets["SUPABASE_KEY"]
-    supabase = create_client(url, key)
+        "Platone": {"opera": "Simposio", "testo": "Al tocco dell'amore, ognuno diventa poeta."}
+    }
 
     col_l, col_c, col_r = st.columns([0.1,1,0.1])
     with col_c:
@@ -99,33 +119,29 @@ def show():
                     <div class="testo-stimolo">"{dati['testo']}"</div>
                 </div>
             """, unsafe_allow_html=True)
-            
-            st.write("")
-            if st.button("🖋️ Corri allo Scrittoio"):
-                st.session_state.selezione_filo = dati['testo']
-                st.switch_page("pages/Scrittoio.py")
-            
-            if st.button("💾 Salva questa citazione"):
-                if "utente" in st.session_state:
-                    try:
-                        record = {
-                            "titolo": f"Citazione: {selezione}",
-                            "versi": dati['testo'],
-                            "categoria": "Citazione",
-                            "autore": st.session_state.utente,
-                            "pubblica": False,
-                            "immagine_url": "",
-                            "stile_layout": {}
-                        }
-                        supabase.table("Opere").insert(record).execute()
-                        st.success("Citazione salvata nello Scrittoio!")
-                    except Exception as e:
-                        st.error(f"Errore salvataggio: {e}")
-            if st.button("🖨️ Scarica PDF"):
-                pdf_data = genera_pdf(f"Citazione: {selezione}", st.session_state.utente if "utente" in st.session_state else "Anonimo", dati['testo'])
-                st.download_button("Download PDF", data=pdf_data, file_name=f"Citazione_{selezione}.pdf", mime="application/pdf")
-        else:
-            st.markdown("<div style='text-align:center; margin-top:80px; opacity:0.4; font-family:\"EB Garamond\"; font-size:1.5rem;'>Il silenzio è l'inizio di ogni grande opera.</div>", unsafe_allow_html=True)
 
-if __name__ == "__main__":
-    show()
+            # Scrittoio integrato
+            st.subheader("Scrivi qui le tue riflessioni")
+            testo_iniziale = st.session_state.get('filosofaMente_text', '')
+            testo = st.text_area("", value=testo_iniziale, height=250)
+            st.session_state['filosofaMente_text'] = testo
+
+            # Pulsanti di azione
+            col1, col2, col3 = st.columns(3)
+            with col1:
+               # --- SERRANDA OPERATIVA (Sotto lo scrittoio) ---
+             with st.expander("🛠️ GESTISCI LA TUA OPERA"):
+                c1, c2, c3, c4 = st.columns(4)
+                with c1:
+                    if st.button("💾 SALVA", key="btn_save"):
+                        st.success("Testo salvato con successo!")
+                with c2:
+                    if st.button("📝 MODIFICA", key="btn_edit"):
+                        st.info("L'area sopra è pronta per la revisione.")
+                with c3:
+                    if st.button("🗑️ ELIMINA", key="btn_del"):
+                        st.session_state['filosofamente_text'] = ""
+                        st.rerun()
+                with c4:
+                    pdf_data = genera_pdf(f"Riflessione: {selezione}", "Autore", testo)
+                    st.download_button("🖨️ STAMPA PDF", data=pdf_data, file_name="Riflessione.pdf", key="btn_pdf")

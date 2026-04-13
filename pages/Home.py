@@ -11,7 +11,7 @@ def get_base64_image(image_path):
 
 def apply_aesthetic_style():
     """Applica lo stile 'Parchment & Ink' ottimizzato per leggibilità e coerenza con l'app."""
-    path_icona = "assets/Icona.png"  # Coerenza con cartella assets
+    path_icona = "assets/Fronte.png"  # Coerenza con cartella assets
     img_base64 = get_base64_image(path_icona)
     img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-home">' if img_base64 else ""
 
@@ -99,7 +99,7 @@ def apply_aesthetic_style():
 def show():
     apply_aesthetic_style()
 
-    st.markdown("<h1 class='poetic-title-home'>Poeticamente ✒️</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='poetic-title-home'>PoeticaMente ✒️</h1>", unsafe_allow_html=True)
     st.markdown("<p class='home-subtitle'>Dimora sacra per l'arte del verso</p>", unsafe_allow_html=True)
     
     col1, col2 = st.columns([1.8, 1], gap="large")
@@ -122,7 +122,7 @@ def show():
             <p>Affiggi i tuoi versi al cuore del mondo. Leggi e lasciati ispirare dalla comunità.</p>
         </div>
         <div class='feature-box'>
-            <strong>🏛️ Filosofamente</strong>
+            <strong>🏛️ FilosofaMente</strong>
             <p>Evoca i grandi maestri del passato. Lascia che una scintilla di pensiero illumini la tua penna.</p>
         </div>
         """, unsafe_allow_html=True)

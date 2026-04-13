@@ -1,174 +1,103 @@
-/* ========================= */
-/* 1. Sfondo */
-/* ========================= */
+/* ========================================= */
+/* 1. RESET E STRUTTURA GENERALE             */
+/* ========================================= */
 [data-testid="stAppViewContainer"] {
     background-color: #f4ecd8 !important;
-    background-image: none !important;
-    position: relative;
-    z-index: 0;
-    overflow: hidden;
 }
 
-/* ========================= */
-/* 2. Contenitore Medaglione */
-/* ========================= */
+.main .block-container {
+    padding-top: 2rem !important;
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+    max-width: 100% !important; /* Libera lo spazio per i bottoni dello Scrittoio */
+    position: relative;
+    z-index: 10;
+}
+
+/* ========================================= */
+/* 2. LA SOGLIA (LOGIN)                      */
+/* ========================================= */
+.home-container {
+    max-width: 300px !important;
+    margin-left: 5% !important;
+    margin-top: 5vh !important;
+    position: relative;
+    z-index: 20;
+}
+
 div.stMarkdown div.medaglione-container {
     position: fixed;
     top: 50%;
-    left: 30%; /* 🔥 leggermente più centrale */
+    right: -5%; 
     transform: translateY(-50%);
-    
-    width: 60vw;
-    height: 100vh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+    width: 50vw;
     z-index: 1;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
 }
 
-/* ========================= */
-/* 3. Medaglione con LUCE */
-/* ========================= */
-/* 3. Medaglione con LUCE migliorato */
 img.medaglione-immagine {
     max-height: 85vh;
     width: auto;
-    object-fit: contain;
-    border-radius: 70%;
-
-    /* 🔥 Ombra e bagliore dorato più evidenti */
-    box-shadow: 
-        0 0 50px 15px rgba(241, 188, 10, 0.5),  /* bagliore dorato più intenso */
-        0 0 80px 30px rgba(0, 0, 0, 0.25),    /* ombra morbida nera */
-        0 0 120px 60px rgba(0, 0, 0, 0.0);
-
-    /* sfuma il bordo e maschera il bianco */
-    filter: 
-        brightness(0.9) 
-        contrast(1.15) 
-        saturate(1.2)
-        drop-shadow(0 0 25px rgba(0,0,0,0.4));
-
-    position: relative;
-    z-index: 2;
-
-    margin-right: 0; 
+    filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.3));
 }
 
-/* ========================= */
-/* 4. Nascondi UI Streamlit */
-/* ========================= */
-header, footer, .stAppDeployButton, #MainMenu, 
-[data-testid="stHeader"], 
-[data-testid="stSidebar"] {
-    display: none !important;
-}
+/* ========================================= */
+/* 3. I BOTTONI (BLINDATI)                    */
+/* ========================================= */
 
-/* ========================= */
-/* 5. Area contenuti */
-/* ========================= */
-.main .block-container {
-    padding-top: 60px !important; 
-    padding-left: 40px !important; 
-    max-width: 340px !important;
-
-    position: relative;
-    z-index: 5;
-}
-
-/* ========================= */
-/* 6. Testi */
-/* ========================= */
-.titolo-soglia {
-    font-family: 'Cinzel', serif !important;
-    color: #1a110f !important;
-    font-size: 3.4em !important;
-    letter-spacing: 6px !important;
-    margin: 0 !important;
-}
-
-.sottotitolo-opera {
-    font-family: 'Playfair Display', serif !important;
-    color: #8c6d46 !important;
-    font-size: 1.2em !important;
-    font-style: italic;
-    margin-top: -10px !important;
-}
-
-.citazione-solenne {
-    border-left: 3px solid #8c6d46;
-    padding-left: 15px !important;
-    margin: 30px 0 !important;
-    color: #3e2723 !important;
-    font-family: 'Georgia', serif !important;
-    font-size: 0.95em !important;
-    line-height: 1.6;
-}
-
-/* ========================= */
-/* 7. Input */
-/* ========================= */
-div[data-testid="stTextInput"], .stButton {
-    max-width: 240px !important; 
-}
-
-input {
-    border: none !important;
-    border-bottom: 1px solid #8c6d46 !important;
-    background-color: transparent !important;
-    color: #1a110f !important;
-}
-
-/* ========================= */
-/* 8. Bottone */
-/* ========================= */
-.stButton>button {
+/* SOLO bottoni dello Scrittoio (più sicuro e isolato) */
+[data-testid="stAppViewContainer"] div.stButton > button {
     background-color: #1a110f !important;
     color: #d4af37 !important;
     border: 1px solid #d4af37 !important;
     font-family: 'Cinzel', serif !important;
-    letter-spacing: 2px;
-    height: 45px;
-    width: 100%;
-    transition: all 0.3s ease;
+
+    min-width: 160px !important;
+    height: 50px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    transition: 0.3s;
 }
 
-.stButton>button:hover {
+/* TESTO dentro i bottoni */
+div.stButton > button p {
+    color: #d4af37 !important;
+    font-size: 0.85rem !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* Bottone login più largo */
+.home-container div.stButton > button {
+    width: 100% !important;
+    max-width: 320px !important;
+}
+
+/* ========================================= */
+/* 3B. EFFETTO HOVER (NUOVO)                 */
+/* ========================================= */
+
+[data-testid="stAppViewContainer"] div.stButton > button:hover {
     background-color: #d4af37 !important;
     color: #1a110f !important;
-    border: 1px solid #1a110f !important;
+    border: 1px solid #d4af37 !important;
 }
 
-/* ========================= */
-/* 📱 RESPONSIVE MOBILE */
-/* ========================= */
-@media (max-width: 768px) {
+/* Forza anche il testo al hover */
+[data-testid="stAppViewContainer"] div.stButton > button:hover p {
+    color: #1a110f !important;
+}
 
-    div.stMarkdown div.medaglione-container {
-        position: fixed;
-        top: 60%;
-        left: 50%; /* centrato su mobile */
-        transform: translate(-50%, -50%);
-        width: 100vw;
-        height: 100vh;
-        justify-content: center;
-    }
-
-    img.medaglione-immagine {
-        max-height: 50vh;
-        margin-right: 0;
-        opacity: 0.25; /* diventa sfondo elegante */
-    }
-
-    .main .block-container {
-        max-width: 90% !important;
-        padding-left: 20px !important;
-    }
-
-    .titolo-soglia {
-        font-size: 2.5em !important;
-    }
+/* ========================================= */
+/* 4. PULIZIA INTERFACCIA                    */
+/* ========================================= */
+header, footer, .stAppDeployButton, #MainMenu, 
+[data-testid="stHeader"], [data-testid="stSidebar"] {
+    display: none !important;
 }

@@ -12,7 +12,7 @@ def get_base64_image(image_path):
 
 def apply_aesthetic_style():
     # Gestione sicura dell'icona watermark
-    path_icona = "Poeticamente.png"
+    path_icona = "PoeticaMente.png"
     img_base64 = get_base64_image(path_icona)
     img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-bacheca">' if img_base64 else ""
 
