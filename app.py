@@ -17,11 +17,11 @@ st.set_page_config(
 # =========================
 # IMPORT PAGINE
 # =========================
-try:
-    from pages import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio
-except ImportError as e:
-    st.error(f"Errore di importazione pagine: {e}")
-    st.stop()
+#try:
+#    from pages import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio
+#except ImportError as e:
+#    st.error(f"Errore di importazione pagine: {e}")
+#    st.stop()
 
 # =========================
 # CONNESSIONE SUPABASE
@@ -147,21 +147,22 @@ else:
             st.rerun()
 
     # Routing pagine
-    if menu == "Home":
-        importlib.reload(Home)
-        Home.show()
-    elif menu == "Scrittoio":
-        importlib.reload(Scrittoio)
-        Scrittoio.show()
-    elif menu == "Bacheca":
-        importlib.reload(Bacheca)
-        Bacheca.show()
-    elif menu == "FilosofaMente":
-        importlib.reload(FilosofaMente)
-        FilosofaMente.show()
-    elif menu == "Archivio":
-        importlib.reload(Archivio)
-        Archivio.show()
-    elif menu == "Premio":
-        importlib.reload(Premio)
-        Premio.show()
+    #if menu == "Home":
+        #importlib.reload(Home)
+        #Home.show()
+    #elif menu == "Scrittoio":
+        #importlib.reload(Scrittoio)
+        #Scrittoio.show()
+    #elif menu == "Bacheca":
+        #importlib.reload(Bacheca)
+        #Bacheca.show()
+    #elif menu == "FilosofaMente":
+        #importlib.reload(FilosofaMente)
+        #FilosofaMente.show()
+    #elif menu == "Archivio":
+        #importlib.reload(Archivio)
+        #Archivio.show()
+    #elif menu == "Premio":
+        #importlib.reload(Premio)
+        #Premio.show()
+        st.write(f"Soglia varcata con successo! Benvenuto {st.session_state.utente}")
