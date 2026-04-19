@@ -17,11 +17,7 @@ st.set_page_config(
 # =========================
 # IMPORT PAGINE
 # =========================
-#try:
-#    from pages import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio
-#except ImportError as e:
-#    st.error(f"Errore di importazione pagine: {e}")
-#    st.stop()
+from pagine_web import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio
 
 # =========================
 # CONNESSIONE SUPABASE
@@ -61,10 +57,17 @@ def carica_medaglione():
 # =========================
 if not st.session_state.authenticated:
 
-    # *** Carica style.css - UNICA fonte di stile ***
+    # Carica style.css
     if os.path.exists("style.css"):
         with open("style.css", "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+    # Nasconde Sidebar e Header solo nella Soglia
+    st.markdown("""
+        <style>
+            [data-testid="stSidebar"], header, [data-testid="stHeader"] {display: none !important;}
+        </style>
+    """, unsafe_allow_html=True)
 
     # Medaglione centrato
     medaglione = carica_medaglione()
@@ -90,36 +93,40 @@ if not st.session_state.authenticated:
         </div>
     """, unsafe_allow_html=True)
 
-    # Campi login
-    u = st.text_input("L'Identità", placeholder="Chi bussa?", key="input_u")
-    p = st.text_input("La Chiave", type="password", placeholder="La firma...", key="input_p")
+    # --- CAMPI LOGIN SISTEMATI ---
+    col1, col2, col3 = st.columns([1, 1.2, 1]) # Stringe l'area centrale
 
-    if st.button("VARCA IL PORTALE", use_container_width=True):
-        if u and p:
-            try:
-                user_val = str(u).strip()
-                pass_val = str(p).strip()
-                res = supabase.table("Opere").select("autore") \
-                    .eq("autore", user_val) \
-                    .eq("codice_firma", pass_val) \
-                    .execute()
-                if res.data and len(res.data) > 0:
-                    st.session_state.authenticated = True
-                    st.session_state.utente = user_val
-                    st.session_state.welcome_shown = False
-                    st.rerun()
-                else:
-                    st.error("🔒 Il silenzio non risponde. Chiavi errate.")
-            except Exception as e:
-                st.error(f"Errore tecnico di connessione: {e}")
-        else:
-            st.warning("✍️ La Soglia richiede che ogni campo sia colmato.")
+    with col2:
+        u = st.text_input("L'Identità", placeholder="Chi bussa?", key="input_u")
+        p = st.text_input("La Chiave", type="password", placeholder="La firma...", key="input_p")
+        
+        st.markdown("<div style='margin-bottom: 15px;'></div>", unsafe_allow_html=True)
+        
+        if st.button("VARCA IL PORTALE", use_container_width=True):
+            if u and p:
+                try:
+                    user_val = str(u).strip()
+                    pass_val = str(p).strip()
+                    res = supabase.table("Opere").select("autore") \
+                        .eq("autore", user_val) \
+                        .eq("codice_firma", pass_val) \
+                        .execute()
+                    if res.data and len(res.data) > 0:
+                        st.session_state.authenticated = True
+                        st.session_state.utente = user_val
+                        st.session_state.welcome_shown = False
+                        st.rerun()
+                    else:
+                        st.error("🔒 Il silenzio non risponde. Chiavi errate.")
+                except Exception as e:
+                    st.error(f"Errore tecnico di connessione: {e}")
+            else:
+                st.warning("✍️ La Soglia richiede che ogni campo sia colmato.")
 
 # =========================
 # APP AUTENTICATA
 # =========================
 else:
-
     # Benvenuto (solo una volta)
     if not st.session_state.welcome_shown:
         st.toast(f"Benvenuto, {st.session_state.utente} ✨")
@@ -147,22 +154,21 @@ else:
             st.rerun()
 
     # Routing pagine
-    #if menu == "Home":
-        #importlib.reload(Home)
-        #Home.show()
-    #elif menu == "Scrittoio":
-        #importlib.reload(Scrittoio)
-        #Scrittoio.show()
-    #elif menu == "Bacheca":
-        #importlib.reload(Bacheca)
-        #Bacheca.show()
-    #elif menu == "FilosofaMente":
-        #importlib.reload(FilosofaMente)
-        #FilosofaMente.show()
-    #elif menu == "Archivio":
-        #importlib.reload(Archivio)
-        #Archivio.show()
-    #elif menu == "Premio":
-        #importlib.reload(Premio)
-        #Premio.show()
-        st.write(f"Soglia varcata con successo! Benvenuto {st.session_state.utente}")
+    if menu == "Home":
+        importlib.reload(Home)
+        Home.show()
+    elif menu == "Scrittoio":
+        importlib.reload(Scrittoio)
+        Scrittoio.show()
+    elif menu == "Bacheca":
+        importlib.reload(Bacheca)
+        Bacheca.show()
+    elif menu == "FilosofaMente":
+        importlib.reload(FilosofaMente)
+        FilosofaMente.show()
+    elif menu == "Archivio":
+        importlib.reload(Archivio)
+        Archivio.show()
+    elif menu == "Premio":
+        importlib.reload(Premio)
+        Premio.show()
