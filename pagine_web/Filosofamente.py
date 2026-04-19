@@ -3,7 +3,6 @@ from fpdf import FPDF
 import os
 import base64
 import io
-import json  # compatibilità futura
 
 # =========================
 # Funzioni ausiliarie
@@ -18,13 +17,18 @@ def genera_pdf(titolo, autore, testo):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Times", 'B', 24)
-    pdf.cell(0, 20, titolo.encode('latin-1', 'replace').decode('latin-1'), ln=True, align='C')
+    # Gestione codifica per evitare errori con caratteri speciali
+    t_enc = titolo.encode('latin-1', 'replace').decode('latin-1')
+    a_enc = f"Scritto da: {autore}".encode('latin-1', 'replace').decode('latin-1')
+    txt_enc = testo.encode('latin-1', 'replace').decode('latin-1')
+    
+    pdf.cell(0, 20, t_enc, ln=True, align='C')
     pdf.ln(10)
     pdf.set_font("Times", 'I', 12)
-    pdf.cell(0, 10, f"Scritto da: {autore}".encode('latin-1', 'replace').decode('latin-1'), ln=True, align='R')
+    pdf.cell(0, 10, a_enc, ln=True, align='R')
     pdf.ln(10)
     pdf.set_font("Times", size=14)
-    pdf.multi_cell(0, 10, testo.encode('latin-1', 'replace').decode('latin-1'))
+    pdf.multi_cell(0, 10, txt_enc)
     return pdf.output(dest='S').encode('latin-1')
 
 # =========================
@@ -32,7 +36,7 @@ def genera_pdf(titolo, autore, testo):
 # =========================
 def apply_sacred_style(bg_image=None):
     if bg_image is None:
-        bg_image = "assets/Fronte_3d.png"  # default
+        bg_image = "assets/Fronte_3d.png"
 
     img_base64 = get_base64_image(bg_image)
     img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark">' if img_base64 else ""
@@ -40,9 +44,7 @@ def apply_sacred_style(bg_image=None):
     st.markdown(f"""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
-        .stApp {{
-            background-color: #fdf5e6;
-        }}
+        .stApp {{ background-color: #fdf5e6; }}
         .bg-watermark {{
             position: fixed; top:50%; left:50%;
             transform: translate(-50%, -50%);
@@ -57,13 +59,10 @@ def apply_sacred_style(bg_image=None):
             background: rgba(255,255,255,0.6);
             backdrop-filter: blur(5px);
             border:1px solid rgba(0,0,0,0.1);
-            padding:50px;
-            border-radius:4px;
+            padding:50px; border-radius:4px;
             box-shadow:0 20px 40px rgba(0,0,0,0.05);
-            text-align:center;
-            margin-top:30px;
-            min-height:350px;
-            display:flex; flex-direction:column; justify-content:center;
+            text-align:center; margin-top:30px;
+            min-height:350px; display:flex; flex-direction:column; justify-content:center;
             position:relative; z-index:1;
         }}
         .nome-autore {{ font-family:'Cinzel', serif; font-size:2.2rem; color:#5d4037; margin-bottom:5px; }}
@@ -79,22 +78,21 @@ def apply_sacred_style(bg_image=None):
 def show():
     st.markdown("<div class='titolo-filosofaMente'>FilosofaMente</div>", unsafe_allow_html=True)
 
-    # Sezione per cambiare sfondo
-    st.subheader("Sfondo personale (opzionale)")
-    uploaded_file = st.file_uploader("Carica un'immagine", type=['png','jpg','jpeg'])
-    link_image = st.text_input("Oppure inserisci un link diretto all'immagine")
+    # Configurazione Sfondo
+    with st.expander("🎨 Personalizza Atmosfera"):
+        uploaded_file = st.file_uploader("Carica un'immagine", type=['png','jpg','jpeg'])
+        link_image = st.text_input("Oppure inserisci un link diretto")
+    
     bg_image = None
     if uploaded_file:
-        bytes_data = uploaded_file.read()
-        bg_image = f"temp_bg.png"
+        bg_image = "temp_bg.png"
         with open(bg_image, "wb") as f:
-            f.write(bytes_data)
+            f.write(uploaded_file.getbuffer())
     elif link_image:
         bg_image = link_image
 
     apply_sacred_style(bg_image)
 
-    # Dizionario filosofi
     filosofi = {
         "Socrate": {"opera": "Apologia", "testo": "L'unica vera sapienza è sapere di non sapere. Una vita senza ricerca non è degna di essere vissuta."},
         "Marx": {"opera": "Il Capitale", "testo": "La filosofia non ha mai fatto altro che interpretare il mondo; si tratta di trasformarlo."},
@@ -120,28 +118,24 @@ def show():
                 </div>
             """, unsafe_allow_html=True)
 
-            # Scrittoio integrato
             st.subheader("Scrivi qui le tue riflessioni")
             testo_iniziale = st.session_state.get('filosofaMente_text', '')
-            testo = st.text_area("", value=testo_iniziale, height=250)
+            testo = st.text_area("", value=testo_iniziale, height=250, key="area_filo")
             st.session_state['filosofaMente_text'] = testo
 
-            # Pulsanti di azione
-            col1, col2, col3 = st.columns(3)
-            with col1:
-               # --- SERRANDA OPERATIVA (Sotto lo scrittoio) ---
-             with st.expander("🛠️ GESTISCI LA TUA OPERA"):
+            # --- SERRANDA OPERATIVA ---
+            with st.expander("🛠️ GESTISCI LA TUA OPERA"):
                 c1, c2, c3, c4 = st.columns(4)
                 with c1:
                     if st.button("💾 SALVA", key="btn_save"):
-                        st.success("Testo salvato con successo!")
+                        st.success("Testo salvato!")
                 with c2:
                     if st.button("📝 MODIFICA", key="btn_edit"):
-                        st.info("L'area sopra è pronta per la revisione.")
+                        st.info("Area pronta.")
                 with c3:
                     if st.button("🗑️ ELIMINA", key="btn_del"):
-                        st.session_state['filosofamente_text'] = ""
+                        st.session_state['filosofaMente_text'] = ""
                         st.rerun()
                 with c4:
-                    pdf_data = genera_pdf(f"Riflessione: {selezione}", "Autore", testo)
-                    st.download_button("🖨️ STAMPA PDF", data=pdf_data, file_name="Riflessione.pdf", key="btn_pdf")
+                    pdf_data = genera_pdf(f"Riflessione: {selezione}", st.session_state.get('utente', 'Autore'), testo)
+                    st.download_button("🖨️ PDF", data=pdf_data, file_name="Riflessione.pdf", key="btn_pdf")
