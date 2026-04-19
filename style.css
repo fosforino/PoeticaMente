@@ -1,103 +1,165 @@
 /* ========================================= */
-/* 1. RESET E STRUTTURA GENERALE             */
+/* style.css - UNICA FONTE DI STILE          */
 /* ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* SFONDO APP */
+.stApp {
+    background-color: #fdf5e6 !important;
+    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
+}
+
 [data-testid="stAppViewContainer"] {
-    background-color: #f4ecd8 !important;
+    background-color: transparent !important;
 }
 
 .main .block-container {
-    padding-top: 2rem !important;
-    padding-left: 3rem !important;
-    padding-right: 3rem !important;
-    max-width: 100% !important; /* Libera lo spazio per i bottoni dello Scrittoio */
+    max-width: 100% !important;
+    padding: 0 !important;
+}
+
+/* ----------------------------------------- */
+/* 1. MEDAGLIONE - centrato, grande          */
+/* ----------------------------------------- */
+.medaglione-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.medaglione-cerchio {
+    position: relative;
+    width: 620px;
+    height: 620px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow:
+        0 0 60px 30px rgba(212, 175, 55, 0.40),
+        0 0 120px 60px rgba(184, 142, 35, 0.20),
+        0 0 0 3px rgba(212, 175, 55, 0.30),
+        0 0 0 10px rgba(212, 175, 55, 0.10);
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 240, 180, 0.60) 0%,
+        rgba(230, 190, 80, 0.30) 40%,
+        transparent 70%
+    );
+}
+
+.medaglione-cerchio img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.medaglione-anello {
+    position: absolute;
+    top: -8px; left: -8px;
+    right: -8px; bottom: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(212, 175, 55, 0.30);
+    box-shadow: 0 0 0 8px rgba(212, 175, 55, 0.08);
+    pointer-events: none;
+}
+
+/* ----------------------------------------- */
+/* 2. TESTI POETICI - più visibili           */
+/* ----------------------------------------- */
+.titolo-soglia {
+    font-family: 'EB Garamond', serif !important;
+    font-size: 4.5rem !important;
+    font-weight: 700 !important;
+    color: #0d0704 !important;
+    letter-spacing: 0.3em !important;
+    margin-bottom: 0 !important;
     position: relative;
     z-index: 10;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.18);
 }
 
-/* ========================================= */
-/* 2. LA SOGLIA (LOGIN)                      */
-/* ========================================= */
-.home-container {
-    max-width: 300px !important;
-    margin-left: 5% !important;
-    margin-top: 5vh !important;
+.sottotitolo-opera {
+    font-family: 'EB Garamond', serif !important;
+    font-style: italic !important;
+    font-size: 1.3rem !important;
+    color: #8b6508 !important;
+    letter-spacing: 0.2em !important;
+    margin-bottom: 1.5rem !important;
     position: relative;
-    z-index: 20;
+    z-index: 10;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.12);
 }
 
-div.stMarkdown div.medaglione-container {
-    position: fixed;
-    top: 50%;
-    right: -5%; 
-    transform: translateY(-50%);
-    width: 50vw;
-    z-index: 1;
-    pointer-events: none;
-    display: flex;
-    justify-content: center;
+.citazione-solenne {
+    font-family: 'EB Garamond', serif !important;
+    font-style: italic !important;
+    font-size: 1.3rem !important;
+    color: #2e1a10 !important;
+    border-left: 3px solid #c9a227 !important;
+    padding-left: 1rem !important;
+    margin-bottom: 2rem !important;
+    line-height: 1.8 !important;
+    position: relative;
+    z-index: 10;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.10);
 }
 
-img.medaglione-immagine {
-    max-height: 85vh;
-    width: auto;
-    filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.3));
+/* ----------------------------------------- */
+/* 3. LOGIN - etichette e input più visibili */
+/* ----------------------------------------- */
+[data-testid="stTextInput"] label p {
+    font-family: 'EB Garamond', serif !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    color: #1a1008 !important;
+    letter-spacing: 0.1em !important;
 }
 
-/* ========================================= */
-/* 3. I BOTTONI (BLINDATI)                    */
-/* ========================================= */
-
-/* SOLO bottoni dello Scrittoio (più sicuro e isolato) */
-[data-testid="stAppViewContainer"] div.stButton > button {
-    background-color: #1a110f !important;
-    color: #d4af37 !important;
-    border: 1px solid #d4af37 !important;
-    font-family: 'Cinzel', serif !important;
-
-    min-width: 160px !important;
-    height: 50px !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    transition: 0.3s;
+[data-testid="stTextInput"] input {
+    background: rgba(255, 251, 240, 0.88) !important;
+    color: #1a1008 !important;
+    border: 1.5px solid #c9a227 !important;
+    font-family: 'EB Garamond', serif !important;
+    font-size: 1.05rem !important;
 }
 
-/* TESTO dentro i bottoni */
-div.stButton > button p {
-    color: #d4af37 !important;
-    font-size: 0.85rem !important;
+[data-testid="stTextInput"] input::placeholder {
+    color: #7a5c3a !important;
+    opacity: 1 !important;
+}
+
+/* ----------------------------------------- */
+/* 4. BOTTONE PORTALE                        */
+/* ----------------------------------------- */
+div.stButton > button {
+    background: #1a1008 !important;
+    color: #c9a227 !important;
+    font-family: 'EB Garamond', serif !important;
+    font-size: 1.2rem !important;
     font-weight: bold !important;
-    margin: 0 !important;
-    white-space: nowrap !important;
+    letter-spacing: 0.25em !important;
+    border: 1px solid #c9a227 !important;
+    border-radius: 4px !important;
+    padding: 0.7em 2em !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Bottone login più largo */
-.home-container div.stButton > button {
-    width: 100% !important;
-    max-width: 320px !important;
+div.stButton > button:hover {
+    background: #c9a227 !important;
+    color: #1a1008 !important;
 }
 
-/* ========================================= */
-/* 3B. EFFETTO HOVER (NUOVO)                 */
-/* ========================================= */
-
-[data-testid="stAppViewContainer"] div.stButton > button:hover {
-    background-color: #d4af37 !important;
-    color: #1a110f !important;
-    border: 1px solid #d4af37 !important;
-}
-
-/* Forza anche il testo al hover */
-[data-testid="stAppViewContainer"] div.stButton > button:hover p {
-    color: #1a110f !important;
-}
-
-/* ========================================= */
-/* 4. PULIZIA INTERFACCIA                    */
-/* ========================================= */
-header, footer, .stAppDeployButton, #MainMenu, 
-[data-testid="stHeader"], [data-testid="stSidebar"] {
+/* ----------------------------------------- */
+/* 5. PULIZIA STREAMLIT                      */
+/* ----------------------------------------- */
+header, footer, [data-testid="stHeader"], [data-testid="stSidebar"] {
     display: none !important;
 }

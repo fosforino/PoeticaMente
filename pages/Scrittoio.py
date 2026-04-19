@@ -28,7 +28,7 @@ def genera_pdf(titolo, categoria, contenuto, autore):
     pdf.ln(20)
     pdf.set_font("Times", 'I', 12)
     pdf.cell(0, 10, f"Scritto da: {autore}".encode('latin-1', 'replace').decode('latin-1'), ln=True, align='R')
-    return pdf.output(dest='S').encode('latin-1')
+    return bytes(pdf.output())
 
 
 # =========================
@@ -71,7 +71,7 @@ def show():
             color: #3e2723 !important;
         }}
 
-        /* === BOTTONI: colore per colonna === */
+        /* === BOTTONI: stile base === */
         div.stButton > button,
         div.stDownloadButton > button {{
             border: none !important;
@@ -108,6 +108,16 @@ def show():
         div[data-testid="column"]:nth-of-type(3) div.stButton > button {{
             background: #8e0000 !important;
             box-shadow: 0 4px 0 #4a0000 !important;
+        }}
+
+        /* === BOTTONI DISABILITATI → visibili come grigi caldi === */
+        div.stButton > button:disabled,
+        div.stDownloadButton > button:disabled {{
+            background: #c8b99a !important;
+            box-shadow: none !important;
+            color: #7a6652 !important;
+            opacity: 0.6 !important;
+            cursor: not-allowed !important;
         }}
 
         /* Bottoni conferma cancellazione */
@@ -159,12 +169,12 @@ def show():
     opera_corrente = next((o for o in opere if o['titolo'] == scelta), None)
 
     # --- Valori precompilati ---
-    v_titolo   = opera_corrente['titolo']              if opera_corrente else ""
-    v_testo    = opera_corrente['versi']               if opera_corrente else ""
-    v_cat      = opera_corrente.get('categoria', "Poesia") if opera_corrente else "Poesia"
-    v_pubblica = opera_corrente.get('pubblica', False) if opera_corrente else False
-    v_img      = opera_corrente.get('immagine_url', "") if opera_corrente else ""
-    v_stile    = opera_corrente.get('stile_layout', {}) if opera_corrente else {}
+    v_titolo   = opera_corrente['titolo']                   if opera_corrente else ""
+    v_testo    = opera_corrente['versi']                    if opera_corrente else ""
+    v_cat      = opera_corrente.get('categoria', "Poesia")  if opera_corrente else "Poesia"
+    v_pubblica = opera_corrente.get('pubblica', False)      if opera_corrente else False
+    v_img      = opera_corrente.get('immagine_url', "")     if opera_corrente else ""
+    v_stile    = opera_corrente.get('stile_layout', {})     if opera_corrente else {}
 
     # --- Titolo e Categoria ---
     col_t, col_c = st.columns([2, 1])
@@ -264,7 +274,8 @@ def show():
 
     # --- BOTTONE 2: Scarica PDF ---
     with b2:
-        if titolo and contenuto:
+        pdf_abilitato = bool(titolo and contenuto)
+        if pdf_abilitato:
             pdf_data = genera_pdf(titolo, categoria, contenuto, nome_poeta)
             st.download_button(
                 label="🖨️ Scarica PDF",
@@ -279,29 +290,28 @@ def show():
 
     # --- BOTTONE 3: Brucia (Elimina con conferma) ---
     with b3:
-        if opera_corrente:
-            if not st.session_state.conferma_cancella:
-                if st.button("🗑️ Brucia", key="btn_cancella", use_container_width=True):
-                    st.session_state.conferma_cancella = True
-                    st.rerun()
-            else:
-                st.warning("⚠️ Sei sicuro di voler bruciare quest'opera?")
-                c_si, c_no = st.columns(2)
-                with c_si:
-                    if st.button("🔥 Sì, brucia", use_container_width=True):
-                        try:
-                            supabase.table("Opere").delete().eq("id", opera_corrente['id']).execute()
-                            st.session_state.conferma_cancella = False
-                            st.toast("🔥 Opera bruciata.", icon="🔥")
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"Errore durante l'eliminazione: {e}")
-                with c_no:
-                    if st.button("❌ Annulla", use_container_width=True):
-                        st.session_state.conferma_cancella = False
-                        st.rerun()
-        else:
+        if not opera_corrente:
             st.button("🗑️ Brucia", disabled=True, use_container_width=True)
+        elif not st.session_state.conferma_cancella:
+            if st.button("🗑️ Brucia", key="btn_cancella", use_container_width=True):
+                st.session_state.conferma_cancella = True
+                st.rerun()
+        else:
+            st.warning("⚠️ Sei sicuro di voler bruciare quest'opera?")
+            c_si, c_no = st.columns(2)
+            with c_si:
+                if st.button("🔥 Sì, brucia", use_container_width=True):
+                    try:
+                        supabase.table("Opere").delete().eq("id", opera_corrente['id']).execute()
+                        st.session_state.conferma_cancella = False
+                        st.toast("🔥 Opera bruciata.", icon="🔥")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Errore durante l'eliminazione: {e}")
+            with c_no:
+                if st.button("❌ Annulla", use_container_width=True):
+                    st.session_state.conferma_cancella = False
+                    st.rerun()
 
 
 # =========================

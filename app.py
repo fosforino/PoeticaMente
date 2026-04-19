@@ -61,124 +61,12 @@ def carica_medaglione():
 # =========================
 if not st.session_state.authenticated:
 
-    # Carica CSS esterno
+    # *** Carica style.css - UNICA fonte di stile ***
     if os.path.exists("style.css"):
         with open("style.css", "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-    # CSS della Soglia
-    st.markdown("""
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
-
-        .stApp {
-            background-color: #fdf5e6 !important;
-            background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
-        }
-
-        /* Medaglione fisso a destra */
-        .medaglione-wrapper {
-            position: fixed;
-            top: 0; right: 0;
-            width: 52%;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Cerchio che ritaglia l'immagine */
-        .medaglione-cerchio {
-            position: relative;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow:
-                0 0 60px 30px rgba(212, 175, 55, 0.40),
-                0 0 120px 60px rgba(184, 142, 35, 0.20),
-                0 0 0 3px rgba(212, 175, 55, 0.30),
-                0 0 0 10px rgba(212, 175, 55, 0.10);
-            background: radial-gradient(
-                circle at center,
-                rgba(255, 240, 180, 0.60) 0%,
-                rgba(230, 190, 80, 0.30) 40%,
-                transparent 70%
-            );
-        }
-
-        .medaglione-cerchio img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-
-        /* Anello dorato esterno */
-        .medaglione-anello {
-            position: absolute;
-            top: -8px; left: -8px;
-            right: -8px; bottom: -8px;
-            border-radius: 50%;
-            border: 2px solid rgba(212, 175, 55, 0.30);
-            box-shadow: 0 0 0 8px rgba(212, 175, 55, 0.08);
-            pointer-events: none;
-        }
-
-        /* Testi poetici */
-        .titolo-soglia {
-            font-family: 'EB Garamond', serif !important;
-            font-size: 4rem !important;
-            font-weight: 700 !important;
-            color: #1a1008 !important;
-            letter-spacing: 0.3em !important;
-            margin-bottom: 0 !important;
-            position: relative; z-index: 10;
-        }
-        .sottotitolo-opera {
-            font-family: 'EB Garamond', serif !important;
-            font-style: italic !important;
-            font-size: 1.1rem !important;
-            color: #8b6508 !important;
-            letter-spacing: 0.2em !important;
-            margin-bottom: 1.5rem !important;
-            position: relative; z-index: 10;
-        }
-        .citazione-solenne {
-            font-family: 'EB Garamond', serif !important;
-            font-style: italic !important;
-            font-size: 1.15rem !important;
-            color: #3e2723 !important;
-            border-left: 3px solid #c9a227 !important;
-            padding-left: 1rem !important;
-            margin-bottom: 2rem !important;
-            line-height: 1.8 !important;
-            position: relative; z-index: 10;
-        }
-
-        /* Bottone portale */
-        div.stButton > button {
-            background: #1a1008 !important;
-            color: #c9a227 !important;
-            font-family: 'EB Garamond', serif !important;
-            font-size: 1.1rem !important;
-            font-weight: bold !important;
-            letter-spacing: 0.25em !important;
-            border: 1px solid #c9a227 !important;
-            border-radius: 4px !important;
-            padding: 0.7em 2em !important;
-            transition: all 0.3s ease !important;
-        }
-        div.stButton > button:hover {
-            background: #c9a227 !important;
-            color: #1a1008 !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # Carica e mostra il medaglione da file locale
+    # Medaglione centrato
     medaglione = carica_medaglione()
     if medaglione:
         st.markdown(f"""

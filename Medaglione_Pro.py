@@ -11,7 +11,7 @@ ASSETS_DIR = "assets"
 image_fronte_path = os.path.join(ASSETS_DIR, "Fronte.png") 
 image_retro_path = os.path.join(ASSETS_DIR, "Retro_3d.png")
 audio_file = os.path.join(ASSETS_DIR, "musica_colossal.mp3")
-output_video = os.path.join(ASSETS_DIR, "medaglia_v2.mp4")
+output_video = os.path.join(ASSETS_DIR, "Medaglia_v2.mp4")
 temp_video_avi = "temp_render.avi"
 
 width, height = 1920, 1080
