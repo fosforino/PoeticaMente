@@ -10,85 +10,55 @@ def get_base64_image(image_path):
     return None
 
 def apply_aesthetic_style():
-    """Applica lo stile 'Parchment & Ink' ottimizzato per leggibilità e coerenza con l'app."""
-    path_icona = "assets/Fronte.png"  # Coerenza con cartella assets
+    """Applica lo stile con il medaglione Fronte.png ben visibile."""
+    # Cerchiamo il file con il nuovo nome
+    path_icona = "Fronte.png"  
     img_base64 = get_base64_image(path_icona)
-    img_html = f'<img src="data:image/png;base64,{img_base64}" class="bg-watermark-home">' if img_base64 else ""
+    
+    # Se non lo trova nella root, prova nella cartella assets (giusto per sicurezza)
+    if not img_base64:
+        img_base64 = get_base64_image("assets/Fronte.png")
+
+    img_html = f"""
+        <div class="medaglione-wrapper-home">
+            <img src="data:image/png;base64,{img_base64}" class="medaglione-img-home">
+        </div>
+    """ if img_base64 else ""
 
     st.markdown(
         f"""
         <style>
-        /* Stile base app */
-        .stApp {{
-            color: #3e2723;
-            line-height: 1.8;
-        }}
-
-        /* Watermark Home */
-        .bg-watermark-home {{
+        /* Contenitore Medaglione - Centrato e Nitido */
+        .medaglione-wrapper-home {{
             position: fixed;
-            top: 55%; left: 50%;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
-            width: 65vw;
-            opacity: 0.06;
-            filter: blur(10px);
+            width: 550px; /* Un po' più grande per dare impatto */
             z-index: -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             pointer-events: none;
         }}
 
-        /* Titolo e sottotitolo */
+        .medaglione-img-home {{
+            width: 100%;
+            opacity: 0.20 !important; /* Alzato per essere sicuri di vederlo */
+            filter: sepia(0.4) brightness(1.1); /* Tocco vintage */
+        }}
+
+        /* Stile App */
+        .stApp {{
+            background-color: #fdf5e6 !important;
+        }}
+
         .poetic-title-home {{ 
-            font-family: 'Playfair Display', serif; 
-            font-size: 4rem; color: #3e2723; 
-            text-align: center; margin-top: -20px;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }}
-        
-        .home-subtitle {{
-            font-family: 'EB Garamond', serif;
-            font-style: italic; font-size: 1.8rem;
-            text-align: center; color: #5d4037;
-            margin-bottom: 50px;
-        }}
-
-        /* Box trasparenti leggibili */
-        .feature-box {{
-            background-color: rgba(255, 250, 240, 0.4);
-            padding: 25px; border-radius: 8px;
-            border-left: 4px solid #c19a6b;
-            margin-bottom: 25px;
-            color: #3e2723;
-            font-size: 1.25rem;
-            line-height: 1.6;
-        }}
-        
-        .feature-box strong {{
-            color: #3e2723;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            display: block;
-            margin-bottom: 8px;
-        }}
-
-        /* Regole del Poeta */
-        .rules-card {{
-            background-color: rgba(244, 236, 224, 0.7);
-            padding: 25px; border-radius: 4px;
-            border: 1px solid #d2b48c;
-            font-family: 'EB Garamond', serif;
-            font-size: 1.2rem;
-        }}
-
-        /* Messaggio status utente */
-        .status-msg {{
-            text-align: center; padding: 20px; 
-            border-radius: 6px; 
-            background-color: rgba(193, 154, 107, 0.2); 
-            border: 1px solid #c19a6b;
-            color: #3e2723; font-style: italic;
-            font-size: 1.3rem;
-            margin-top: 30px;
+            font-family: 'Cinzel', serif; 
+            font-size: 4.5rem; 
+            color: #3e2723; 
+            text-align: center; 
+            margin-bottom: 0px;
         }}
         </style>
         {img_html}

@@ -1,5 +1,5 @@
 /* ========================================= */
-/* style.css - UNICA FONTE DI STILE          */
+/* style.css - EDIZIONE OTTIMIZZATA          */
 /* ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
@@ -14,148 +14,115 @@
     background-color: transparent !important;
 }
 
-.main .block-container {
-    max-width: 100% !important;
-    padding: 0 !important;
+/* ----------------------------------------- */
+/* 1. TITOLI E NOMI - PIÙ EVIDENTI           */
+/* ----------------------------------------- */
+
+/* Titoli principali (H1, H2) nello Scrittoio e pagine */
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+    font-family: 'Cinzel', serif !important;
+    color: #432818 !important; /* Marrone scuro profondo */
+    text-align: center !important;
+    letter-spacing: 0.15em !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1) !important;
+    font-weight: 700 !important;
+    margin-top: 1rem !important;
+}
+
+/* Label dei widget (Nomi sopra i campi di testo) */
+[data-testid="stWidgetLabel"] p {
+    font-family: 'Cinzel', serif !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #5d4037 !important;
+    letter-spacing: 0.05em !important;
 }
 
 /* ----------------------------------------- */
-/* 1. MEDAGLIONE - centrato, grande          */
+/* 2. BOTTONI - EFFETTO RILIEVO E CONTRASTO  */
+/* ----------------------------------------- */
+div.stButton > button {
+    background: #ffffff !important; /* Sfondo chiaro per contrasto */
+    color: #432818 !important;     /* Testo scuro */
+    font-family: 'Cinzel', serif !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    letter-spacing: 0.1em !important;
+    border: 1.5px solid #bb9457 !important; /* Bordo Bronzo/Oro */
+    border-radius: 6px !important;
+    padding: 0.6em 1.2em !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; /* Ombra per rilievo */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    width: 100% !important;
+}
+
+/* Effetto Hover (Passaggio Mouse) */
+div.stButton > button:hover {
+    background: #bb9457 !important; /* Diventa color bronzo */
+    color: #ffffff !important;     /* Testo bianco */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2) !important;
+    transform: translateY(-2px) !important; /* Si alza leggermente */
+    border-color: #432818 !important;
+}
+
+/* Bottone Speciale per il Login (Soglia) */
+/* Identificabile se è l'unico o tramite stile specifico nel codice */
+.stButton button[kind="primary"] {
+    background: #1a1008 !important;
+    color: #c9a227 !important;
+    border: 1px solid #c9a227 !important;
+}
+
+/* ----------------------------------------- */
+/* 3. INPUT TEXT E TEXTAREA                  */
+/* ----------------------------------------- */
+[data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea {
+    background: rgba(255, 251, 240, 0.9) !important;
+    color: #1a1008 !important;
+    border: 1.5px solid #bb9457 !important;
+    font-family: 'EB Garamond', serif !important;
+    font-size: 1.1rem !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+/* ----------------------------------------- */
+/* MEDAGLIONE - FIX VISIBILITÀ               */
 /* ----------------------------------------- */
 .medaglione-wrapper {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100vh;
+    width: 600px; /* Dimensione fissa per sicurezza */
+    height: 600px;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 0; /* Portiamolo un po' più avanti, ma sotto i form */
     pointer-events: none;
-    z-index: -1; /* Lo sposta dietro ai form */
 }
 
 .medaglione-cerchio {
-    position: relative;
-    width: 620px;
-    height: 620px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
+    /* Se l'immagine è su GitHub, usiamo il tag <img> in Home.py, 
+       ma diamo al cerchio un bordo dorato visibile */
+    border: 3px solid rgba(212, 175, 55, 0.5); 
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
     overflow: hidden;
-    box-shadow:
-        0 0 60px 30px rgba(212, 175, 55, 0.40),
-        0 0 120px 60px rgba(184, 142, 35, 0.20),
-        0 0 0 3px rgba(212, 175, 55, 0.30),
-        0 0 0 10px rgba(212, 175, 55, 0.10);
-    background: radial-gradient(
-        circle at center,
-        rgba(255, 240, 180, 0.60) 0%,
-        rgba(230, 190, 80, 0.30) 40%,
-        transparent 70%
-    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1); /* Un velo di luce */
 }
 
 .medaglione-cerchio img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-
-.medaglione-anello {
-    position: absolute;
-    top: -8px; left: -8px;
-    right: -8px; bottom: -8px;
-    border-radius: 50%;
-    border: 2px solid rgba(212, 175, 55, 0.30);
-    box-shadow: 0 0 0 8px rgba(212, 175, 55, 0.08);
-    pointer-events: none;
-}
-
-/* ----------------------------------------- */
-/* 2. TESTI POETICI - più visibili           */
-/* ----------------------------------------- */
-.titolo-soglia {
-    font-family: 'EB Garamond', serif !important;
-    font-size: 4.5rem !important;
-    font-weight: 700 !important;
-    color: #0d0704 !important;
-    letter-spacing: 0.3em !important;
-    margin-bottom: 0 !important;
-    position: relative;
-    z-index: 10;
-    text-shadow: 1px 1px 6px rgba(0,0,0,0.18);
-}
-
-.sottotitolo-opera {
-    font-family: 'EB Garamond', serif !important;
-    font-style: italic !important;
-    font-size: 1.3rem !important;
-    color: #8b6508 !important;
-    letter-spacing: 0.2em !important;
-    margin-bottom: 1.5rem !important;
-    position: relative;
-    z-index: 10;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.12);
-}
-
-.citazione-solenne {
-    font-family: 'EB Garamond', serif !important;
-    font-style: italic !important;
-    font-size: 1.3rem !important;
-    color: #2e1a10 !important;
-    border-left: 3px solid #c9a227 !important;
-    padding-left: 1rem !important;
-    margin-bottom: 2rem !important;
-    line-height: 1.8 !important;
-    position: relative;
-    z-index: 10;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.10);
-}
-
-/* ----------------------------------------- */
-/* 3. LOGIN - etichette e input più visibili */
-/* ----------------------------------------- */
-[data-testid="stTextInput"] label p {
-    font-family: 'EB Garamond', serif !important;
-    font-size: 1.15rem !important;
-    font-weight: 700 !important;
-    color: #1a1008 !important;
-    letter-spacing: 0.1em !important;
-}
-
-[data-testid="stTextInput"] input {
-    background: rgba(255, 251, 240, 0.88) !important;
-    color: #1a1008 !important;
-    border: 1.5px solid #c9a227 !important;
-    font-family: 'EB Garamond', serif !important;
-    font-size: 1.05rem !important;
-}
-
-[data-testid="stTextInput"] input::placeholder {
-    color: #7a5c3a !important;
-    opacity: 1 !important;
-}
-
-/* ----------------------------------------- */
-/* 4. BOTTONE PORTALE                        */
-/* ----------------------------------------- */
-div.stButton > button {
-    background: #1a1008 !important;
-    color: #c9a227 !important;
-    font-family: 'EB Garamond', serif !important;
-    font-size: 1.2rem !important;
-    font-weight: bold !important;
-    letter-spacing: 0.25em !important;
-    border: 1px solid #c9a227 !important;
-    border-radius: 4px !important;
-    padding: 0.7em 2em !important;
-    transition: all 0.3s ease !important;
-}
-
-div.stButton > button:hover {
-    background: #c9a227 !important;
-    color: #1a1008 !important;
+    object-fit: contain; /* Non taglia l'immagine */
+    opacity: 0.15 !important; /* Rendiamolo un po' più visibile (era 0.05) */
+    filter: sepia(0.5) brightness(1.1); /* Effetto antico */
 }
 
 /* ----------------------------------------- */
