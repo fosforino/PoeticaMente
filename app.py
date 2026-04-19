@@ -11,7 +11,7 @@ st.set_page_config(
     page_title="PoeticaMente",
     page_icon="✒️",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # =========================
@@ -65,13 +65,15 @@ def carica_medaglione():
 # =========================
 if not st.session_state.authenticated:
 
-    # Carica CSS globale (sempre)
+    # Carica CSS globale
     carica_css()
 
-    # Nasconde Sidebar e Header solo nella Soglia
+    # Nasconde Sidebar e Header SOLO nella schermata login
     st.markdown("""
         <style>
-            [data-testid="stSidebar"], header, [data-testid="stHeader"] {display: none !important;}
+            [data-testid="stSidebar"] { display: none !important; }
+            header { display: none !important; }
+            [data-testid="stHeader"] { display: none !important; }
         </style>
     """, unsafe_allow_html=True)
 
@@ -133,8 +135,17 @@ if not st.session_state.authenticated:
 # APP AUTENTICATA
 # =========================
 else:
-    # Carica CSS globale (sempre, anche nelle pagine interne)
+    # Carica CSS globale
     carica_css()
+
+    # Forza sidebar visibile dopo il login
+    st.markdown("""
+        <style>
+            [data-testid="stSidebar"] { display: block !important; }
+            section[data-testid="stSidebar"] { display: block !important; }
+            [data-testid="stSidebarNav"] { display: block !important; }
+        </style>
+    """, unsafe_allow_html=True)
 
     # Benvenuto (solo una volta)
     if not st.session_state.welcome_shown:

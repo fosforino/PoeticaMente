@@ -104,15 +104,6 @@ div.stDownloadButton > button:hover:not(:disabled) {
 }
 
 /* ----------------------------------------- */
-/* BOTTONE LOGIN (VARCA IL PORTALE)          */
-/* ----------------------------------------- */
-div.stButton > button[kind="primary"] {
-    background: #1a1008 !important;
-    color: #c9a227 !important;
-    border: 1px solid #c9a227 !important;
-}
-
-/* ----------------------------------------- */
 /* INPUT E TEXTAREA                          */
 /* ----------------------------------------- */
 [data-testid="stTextInput"] input,
