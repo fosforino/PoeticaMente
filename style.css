@@ -12,6 +12,19 @@ html, body {
     padding: 0 !important;
     width: 100% !important;
     min-height: 100vh !important;
+    background-color: #fdf5e6 !important;
+    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
+}
+
+/* Wrapper intermedi Streamlit che causano i bordi bianchi */
+#root,
+.stApp > div,
+[data-testid="stAppViewContainer"] > div,
+[data-testid="stAppViewContainer"] > section,
+[data-testid="stBottom"],
+[data-testid="stMainBlockContainer"],
+.block-container {
+    background-color: transparent !important;
 }
 
 .stApp {
