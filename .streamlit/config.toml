@@ -1,2 +1,13 @@
 [client]
 showSidebarNavigation = false
+[server]
+headless = true
+
+[theme]
+base = "light"
+backgroundColor = "#c8a96e"
+secondaryBackgroundColor = "#c8a96e"
+
+[client]
+showSidebarNavigation = false
+toolbarMode = "minimal"
