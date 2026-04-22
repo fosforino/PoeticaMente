@@ -66,12 +66,18 @@ if not st.session_state.authenticated:
         [data-testid="stHeader"] {{ display: none !important; }}
         footer {{ display: none !important; }}
 
-        html, body {{
+       html, body {{
             margin: 0 !important;
             padding: 0 !important;
             overflow-x: hidden !important;
             width: 100vw !important;
             height: 100vh !important;
+            background-color: #c8a96e !important;
+        }}
+        #root, .stApp > div,
+        [data-testid="stAppViewContainer"] > div,
+        [data-testid="stAppViewContainer"] > section {{
+            background-color: transparent !important;
         }}
         .stApp {{
             margin: 0 !important;
@@ -79,6 +85,7 @@ if not st.session_state.authenticated:
             width: 100vw !important;
             min-height: 100vh !important;
             overflow: hidden !important;
+            background-color: #c8a96e !important;
         }}
         .block-container,
         [data-testid="stAppViewContainer"],
