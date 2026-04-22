@@ -29,7 +29,7 @@ def genera_pdf(titolo, autore, testo):
     pdf.ln(10)
     pdf.set_font("Times", size=14)
     pdf.multi_cell(0, 10, txt_enc)
-    return pdf.output(dest='S').encode('latin-1')
+    return bytes(pdf.output(dest='S'))
 
 # =========================
 # Stile e sfondo

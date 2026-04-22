@@ -25,7 +25,7 @@ def genera_pdf(opere, autore):
         pdf.multi_cell(0, 8, versi)
         pdf.ln(5)
     
-    return pdf.output(dest='S').encode('latin-1')
+    return bytes(pdf.output(dest='S'))
 
 def show():
     st.markdown("<h1 style='text-align:center;'>Archivio Opere</h1>", unsafe_allow_html=True)
