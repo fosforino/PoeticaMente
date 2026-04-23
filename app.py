@@ -65,13 +65,12 @@ if not st.session_state.authenticated:
         header {{ display: none !important; }}
         [data-testid="stHeader"] {{ display: none !important; }}
         footer {{ display: none !important; }}
-* {{
+
+        * {{
             box-sizing: border-box !important;
         }}
-        body > div:first-child {{
-            background-color: #c8a96e !important;
-        }}
-       html, body {{
+
+        html, body {{
             margin: 0 !important;
             padding: 0 !important;
             overflow-x: hidden !important;
@@ -79,11 +78,15 @@ if not st.session_state.authenticated:
             height: 100vh !important;
             background-color: #c8a96e !important;
         }}
-        #root, .stApp > div,
+
+        #root,
+        .stApp > div,
         [data-testid="stAppViewContainer"] > div,
-        [data-testid="stAppViewContainer"] > section {{
+        [data-testid="stAppViewContainer"] > section,
+        body > div:first-child {{
             background-color: transparent !important;
         }}
+
         .stApp {{
             margin: 0 !important;
             padding: 0 !important;
@@ -92,6 +95,7 @@ if not st.session_state.authenticated:
             overflow: hidden !important;
             background-color: #c8a96e !important;
         }}
+
         .block-container,
         [data-testid="stAppViewContainer"],
         [data-testid="stMain"],
@@ -102,6 +106,7 @@ if not st.session_state.authenticated:
             max-width: 100vw !important;
             width: 100vw !important;
             min-height: 100vh !important;
+            background-color: transparent !important;
         }}
 
         .medaglione-bg {{
@@ -239,7 +244,6 @@ if not st.session_state.authenticated:
 else:
     carica_css()
 
-    # Forza sidebar visibile e fix bordi bianchi
     st.markdown("""
         <style>
             [data-testid="stSidebar"] {
@@ -285,7 +289,6 @@ else:
         )
         st.session_state.pagina = menu
 
-        # Selectbox opere — visibile SOLO nello Scrittoio
         if menu == "Scrittoio":
             st.markdown("---")
             opere_lista = st.session_state.get("opere_lista", ["✨ Nuova Opera"])
