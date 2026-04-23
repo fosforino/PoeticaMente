@@ -76,7 +76,7 @@ if not st.session_state.authenticated:
             overflow-x: hidden !important;
             width: 100vw !important;
             height: 100vh !important;
-            background-color: #c8a96e !important;
+            background-color: #f5c37a !important;
         }}
 
         #root,
@@ -93,7 +93,7 @@ if not st.session_state.authenticated:
             width: 100vw !important;
             min-height: 100vh !important;
             overflow: hidden !important;
-            background-color: #c8a96e !important;
+            background-color: #f5c37a !important;
         }}
 
         .block-container,
