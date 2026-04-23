@@ -65,7 +65,12 @@ if not st.session_state.authenticated:
         header {{ display: none !important; }}
         [data-testid="stHeader"] {{ display: none !important; }}
         footer {{ display: none !important; }}
-
+* {{
+            box-sizing: border-box !important;
+        }}
+        body > div:first-child {{
+            background-color: #c8a96e !important;
+        }}
        html, body {{
             margin: 0 !important;
             padding: 0 !important;
