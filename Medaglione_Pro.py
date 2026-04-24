@@ -2,107 +2,184 @@ import numpy as np
 import cv2
 import os
 import sys
-import time
+
 # La nuova sintassi per MoviePy 2.x
 from moviepy import VideoFileClip, AudioFileClip
 
-# === CONFIGURAZIONE ORIGINALE ===
+# === CONFIGURAZIONE ===
 ASSETS_DIR = "assets"
-image_fronte_path = os.path.join(ASSETS_DIR, "Fronte.png") 
-image_retro_path = os.path.join(ASSETS_DIR, "Retro_3d.png")
-audio_file = os.path.join(ASSETS_DIR, "musica_colossal.mp3")
-output_video = os.path.join(ASSETS_DIR, "Medaglia_v2.mp4")
-temp_video_avi = "temp_render.avi"
+image_fronte_path = os.path.join(ASSETS_DIR, "Fronte.png")
+image_retro_path  = os.path.join(ASSETS_DIR, "Retro.png")
+audio_file        = os.path.join(ASSETS_DIR, "musica_colossal.mp3")
+output_video      = os.path.join(ASSETS_DIR, "Medaglia_v2.mp4")
+temp_video_avi    = "temp_render.avi"
 
 width, height = 1920, 1080
-fps = 30
-duration = 20  # Video più rapido e dinamico
-
-total_frames = fps * duration
+fps           = 30
+duration      = 20          # secondi
+total_frames  = fps * duration
 
 if os.path.exists(output_video):
     os.remove(output_video)
 
+
+# ─────────────────────────────────────────
+# RIMOZIONE SFONDO (nero o trasparente)
+# ─────────────────────────────────────────
+def remove_background(img_bgra):
+    """
+    Rende trasparenti i pixel di sfondo.
+    Gestisce sia sfondo nero (Fronte) sia sfondo già trasparente (Retro).
+    """
+    if img_bgra.shape[2] == 4:
+        # Ha già canale alpha: usa flood-fill sui bordi per pulire residui
+        alpha = img_bgra[:, :, 3].copy()
+        h, w  = alpha.shape
+
+        # Maschera flood-fill dai bordi
+        mask = np.zeros((h + 2, w + 2), np.uint8)
+        alpha_copy = alpha.copy()
+        cv2.floodFill(alpha_copy, mask, (0, 0), 0, loDiff=30, upDiff=30)
+        cv2.floodFill(alpha_copy, mask, (w-1, 0), 0, loDiff=30, upDiff=30)
+        cv2.floodFill(alpha_copy, mask, (0, h-1), 0, loDiff=30, upDiff=30)
+        cv2.floodFill(alpha_copy, mask, (w-1, h-1), 0, loDiff=30, upDiff=30)
+        img_bgra[:, :, 3] = alpha_copy
+    else:
+        # Sfondo nero: crea canale alpha basato sulla luminosità
+        gray  = cv2.cvtColor(img_bgra, cv2.COLOR_BGR2GRAY)
+        _, alpha = cv2.threshold(gray, 15, 255, cv2.THRESH_BINARY)
+
+        # Flood-fill dai bordi per non toccare le parti scure del medaglione
+        h, w  = gray.shape
+        mask  = np.zeros((h + 2, w + 2), np.uint8)
+        alpha_fill = alpha.copy()
+        cv2.floodFill(alpha_fill, mask, (0, 0),     0, loDiff=200, upDiff=200)
+        cv2.floodFill(alpha_fill, mask, (w-1, 0),   0, loDiff=200, upDiff=200)
+        cv2.floodFill(alpha_fill, mask, (0, h-1),   0, loDiff=200, upDiff=200)
+        cv2.floodFill(alpha_fill, mask, (w-1, h-1), 0, loDiff=200, upDiff=200)
+
+        # Leggero blur sul bordo per antialiasing
+        alpha_fill = cv2.GaussianBlur(alpha_fill, (3, 3), 0)
+        img_bgra   = cv2.cvtColor(img_bgra, cv2.COLOR_BGR2BGRA)
+        img_bgra[:, :, 3] = alpha_fill
+
+    return img_bgra
+
+
+# ─────────────────────────────────────────
+# CARICAMENTO E PREPARAZIONE IMMAGINI
+# ─────────────────────────────────────────
 def prepare_image(path):
     if not os.path.exists(path):
         print(f"❌ Errore: manca {path}")
         sys.exit()
+
     img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-    # Se PNG ha canale alpha, lo fondiamo su nero per eliminare aloni
-    if img is not None and img.shape[2] == 4:
-        alpha = img[:,:,3] / 255.0
-        for c in range(3):
-            img[:,:,c] = (img[:,:,c] * alpha).astype(np.uint8)
-        img = img[:,:,:3]
-    
-    h, w = img.shape[:2]
-    target_h = int(height * 0.70)
-    ratio = w / h
-    target_w = int(target_h * ratio)
-    return cv2.resize(img, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4), target_w, target_h
+    if img is None:
+        print(f"❌ Impossibile leggere {path}")
+        sys.exit()
+
+    # Assicura 4 canali
+    if img.shape[2] == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+
+    img = remove_background(img)
+
+    h, w      = img.shape[:2]
+    target_h  = int(height * 0.78)
+    ratio     = w / h
+    target_w  = int(target_h * ratio)
+    img       = cv2.resize(img, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+    return img, target_w, target_h
+
 
 img_fronte, t_w, t_h = prepare_image(image_fronte_path)
-img_retro, _, _ = prepare_image(image_retro_path)
+img_retro,  _,   _   = prepare_image(image_retro_path)
 
+
+# ─────────────────────────────────────────
+# COMPOSITING: incolla BGRA su frame nero
+# ─────────────────────────────────────────
+def composite(frame, warped_bgra):
+    """Incolla l'immagine con alpha su frame nero."""
+    bgr   = warped_bgra[:, :, :3].astype(np.float32)
+    alpha = warped_bgra[:, :, 3:4].astype(np.float32) / 255.0
+    frame = frame.astype(np.float32)
+    frame = bgr * alpha + frame * (1 - alpha)
+    return frame.astype(np.uint8)
+
+
+# ─────────────────────────────────────────
+# RENDER
+# ─────────────────────────────────────────
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-video = cv2.VideoWriter(temp_video_avi, fourcc, fps, (width, height))
+video  = cv2.VideoWriter(temp_video_avi, fourcc, fps, (width, height))
 
-print(f"🚀 Renderizzazione Medaglione PoeticaMente in corso...")
+print("🚀 Renderizzazione Medaglione PoeticaMente in corso...")
 
 for i in range(total_frames):
-    frame = np.zeros((height, width, 3), dtype=np.uint8)
+    frame    = np.zeros((height, width, 3), dtype=np.uint8)   # sfondo nero
     progress = i / total_frames
-    angolo_rad = np.radians(progress * (2 * 360)) # 2 giri completi in 20 secondi
-    
-    cos_a = np.cos(angolo_rad)
+    angolo_rad = np.radians(progress * (2 * 360))             # 2 giri in 20 sec
+
+    cos_a    = np.cos(angolo_rad)
     is_front = cos_a >= 0
-    img_target = img_fronte if is_front else img_retro
-    
-   # === NUOVO CODICE 3D DEFINITIVE: Centratura & Profondità ===
-    w_effettivo = t_w * abs(cos_a)
-    
-    # Ricalcoliamo x_offset per una centratura dinamica perfetta
-    x_offset = (width - w_effettivo) / 2
-    
-    # Innalziamo dist_p per forzare l'illusione dello spessore
-    dist_p = abs(np.sin(angolo_rad)) * 160 
-    
-    src_pts = np.float32([[0, 0], [t_w, 0], [t_w, t_h], [0, t_h]])
-    
-    # y_offset garantisce la centratura verticale nel frame 1080p
-    y_offset = (height - t_h) / 2
-    
+    img_src  = img_fronte if is_front else img_retro
+
+    w_effettivo = max(int(t_w * abs(cos_a)), 1)
+    x_offset    = (width  - w_effettivo) / 2
+    y_offset    = (height - t_h)         / 2
+    dist_p      = abs(np.sin(angolo_rad)) * 140
+
+    src_pts = np.float32([[0,   0  ], [t_w, 0  ], [t_w, t_h], [0,   t_h]])
     dst_pts = np.float32([
-        [x_offset, y_offset + dist_p], 
-        [x_offset + w_effettivo, y_offset - dist_p],
-        [x_offset + w_effettivo, y_offset + t_h + dist_p], 
-        [x_offset, y_offset + t_h - dist_p]
+        [x_offset,              y_offset          + dist_p],
+        [x_offset + w_effettivo, y_offset          - dist_p],
+        [x_offset + w_effettivo, y_offset + t_h   + dist_p],
+        [x_offset,              y_offset + t_h    - dist_p],
     ])
 
     matrix = cv2.getPerspectiveTransform(src_pts, dst_pts)
-    warped = cv2.warpPerspective(img_target, matrix, (width, height), flags=cv2.INTER_LANCZOS4)
+    warped = cv2.warpPerspective(img_src, matrix, (width, height),
+                                  flags=cv2.INTER_LANCZOS4)
+
+    # Compositing con alpha
+    frame = composite(frame, warped)
 
     # Riflesso dorato leggero
-    lx = int((i % 60) / 60 * width * 1.5) - 300
-    light_mask = np.zeros_like(frame)
+    lx         = int((i % 60) / 60 * width * 1.5) - 300
+    light_mask = np.zeros((height, width, 3), dtype=np.uint8)
     cv2.line(light_mask, (lx, 0), (lx + 150, height), (70, 60, 20), 40)
     cv2.GaussianBlur(light_mask, (81, 81), 0, light_mask)
-    
-    final_frame = cv2.addWeighted(warped, 1.0, light_mask, 0.4, 0)
-    video.write(final_frame)
+    frame = cv2.addWeighted(frame, 1.0, light_mask, 0.35, 0)
 
-# IL RILASCIO DEVE STARE FUORI DAL CICLO FOR
+    video.write(frame)
+
+    if i % fps == 0:
+        print(f"  ⏳ {i // fps}/{duration} sec")
+
 video.release()
+print("✅ Frame renderizzati!")
 
+# ─────────────────────────────────────────
+# AUDIO + EXPORT FINALE
+# ─────────────────────────────────────────
 try:
     clip = VideoFileClip(temp_video_avi)
     if os.path.exists(audio_file):
-        audio = AudioFileClip(audio_file).subclip(0, duration)
-        clip = clip.set_audio(audio)
-    clip.write_videofile(output_video, codec="libx264", bitrate="3000k")
+        audio = AudioFileClip(audio_file).subclipped(0, duration)
+        clip  = clip.with_audio(audio)
+        print("🎵 Audio aggiunto!")
+    else:
+        print("⚠️  Nessun file audio trovato, video senza musica.")
+
+    clip.write_videofile(output_video, codec="libx264", bitrate="3000k", logger=None)
     clip.close()
-    if os.path.exists(temp_video_avi): 
+
+    if os.path.exists(temp_video_avi):
         os.remove(temp_video_avi)
-    print(f"✅ Video pronto: {output_video}")
+
+    print(f"🎬 Video pronto: {output_video}")
+
 except Exception as e:
     print(f"⚠️ Errore finale: {e}")
