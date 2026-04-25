@@ -167,18 +167,18 @@ if not st.session_state.authenticated:
             z-index: 10;
         }}
 
-        div[data-testid="column"]:nth-of-type(1) {{
-            padding-left: 8vw !important;
+       div[data-testid="column"]:nth-of-type(2) {{
+            padding-left: 2vw !important;
         }}
 
-        div[data-testid="column"]:nth-of-type(1) input {{
+        div[data-testid="column"]:nth-of-type(2) input {{
             width: 200px !important;
             max-width: 200px !important;
-            transition: width 0.3s ease !important;
+            transition: width 0.4s ease !important;
         }}
-        div[data-testid="column"]:nth-of-type(1) input:focus {{
-            width: 280px !important;
-            max-width: 280px !important;
+        div[data-testid="column"]:nth-of-type(2) input:focus {{
+            width: 300px !important;
+            max-width: 300px !important;
         }}
 
         div.stButton > button {{
@@ -189,12 +189,12 @@ if not st.session_state.authenticated:
             font-weight: bold !important;
             letter-spacing: 0.1em !important;
             width: 200px !important;
-            transition: all 0.3s ease !important;
+            transition: all 0.4s ease !important;
         }}
         div.stButton > button:hover {{
             background: #c9a227 !important;
             color: #1a1008 !important;
-            width: 280px !important;
+            width: 300px !important;
         }}
         </style>
 
@@ -212,7 +212,7 @@ if not st.session_state.authenticated:
 
     st.markdown("<div style='height: 62vh'></div>", unsafe_allow_html=True)
 
-    col_login, col_vuota = st.columns([0.25, 0.75])
+    col_vuota_sx, col_login, col_vuota_dx = st.columns([0.08, 0.22, 0.70])
     with col_login:
         u = st.text_input("L'Identità", placeholder="Chi bussa?", key="input_u")
         p = st.text_input("La Chiave", type="password", placeholder="La firma...", key="input_p")
@@ -245,29 +245,36 @@ else:
     carica_css()
 
     st.markdown("""
-        <style>
-            [data-testid="stSidebar"] {
-                display: flex !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-            }
-            section[data-testid="stSidebar"] {
-                display: flex !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                min-width: 240px !important;
-            }
-            [data-testid="stMain"] {
-                background-color: #fdf5e6 !important;
-                background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
-            }
-            .block-container {
-                padding: 2rem 3rem !important;
-                max-width: 1200px !important;
-                margin: 0 auto !important;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+    <style>
+        [data-testid="stSidebar"],
+        [data-testid="stSidebarCollapsedControl"],
+        [data-testid="collapsedControl"] {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        [data-testid="stSidebar"] {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        section[data-testid="stSidebar"] {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            min-width: 240px !important;
+        }
+        [data-testid="stMain"] {
+            background-color: #fdf5e6 !important;
+            background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
+        }
+        .block-container {
+            padding: 2rem 3rem !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
     if not st.session_state.welcome_shown:
         st.toast(f"Benvenuto, {st.session_state.utente} ✨")

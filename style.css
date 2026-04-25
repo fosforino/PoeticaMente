@@ -99,12 +99,12 @@ div[data-testid="column"]:nth-of-type(1) div.stButton > button:not(:disabled) {
     box-shadow: 0 4px 0 #1b5e20 !important;
 }
 
-/* Colonna 2 → Grigio ardesia (Scarica PDF) */
+/* Colonna 2 → Oro manoscritto (Scarica PDF) */
 div[data-testid="column"]:nth-of-type(2) div.stDownloadButton > button {
-    background: #455a64 !important;
+    background: #8B6914 !important;
     color: #ffffff !important;
-    border-color: #263238 !important;
-    box-shadow: 0 4px 0 #263238 !important;
+    border-color: #5c4409 !important;
+    box-shadow: 0 4px 0 #5c4409 !important;
 }
 
 /* Colonna 3 → Rosso scuro (Brucia) */
