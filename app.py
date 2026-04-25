@@ -3,6 +3,7 @@ import os
 import base64
 from supabase import create_client
 import importlib
+from pagine_web import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio, AntropologicaMente
 
 st.set_page_config(
     page_title="PoeticaMente",
@@ -11,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-from pagine_web import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio
+["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio", "AntropologicaMente"]
 
 try:
     url = st.secrets["SUPABASE_URL"]
@@ -326,3 +327,6 @@ else:
     elif menu == "Premio":
         importlib.reload(Premio)
         Premio.show()
+    elif menu == "AntropologicaMente":
+        importlib.reload(AntropologicaMente)
+        AntropologicaMente.show()    

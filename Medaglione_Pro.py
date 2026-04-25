@@ -3,7 +3,6 @@ import cv2
 import os
 import sys
 
-# La nuova sintassi per MoviePy 2.x
 from moviepy import VideoFileClip, AudioFileClip
 
 # === CONFIGURAZIONE ===
@@ -16,7 +15,7 @@ temp_video_avi    = "temp_render.avi"
 
 width, height = 1920, 1080
 fps           = 30
-duration      = 20          # secondi
+duration      = 20
 total_frames  = fps * duration
 
 if os.path.exists(output_video):
@@ -24,52 +23,41 @@ if os.path.exists(output_video):
 
 
 # ─────────────────────────────────────────
-# RIMOZIONE SFONDO (nero o trasparente)
+# RIMOZIONE SFONDO
 # ─────────────────────────────────────────
-def remove_background(img_bgra):
+def remove_background(img_bgra, is_transparent_bg=False):
     """
-    Rende trasparenti i pixel di sfondo.
-    Gestisce sia sfondo nero (Fronte) sia sfondo già trasparente (Retro).
+    - is_transparent_bg=True  → PNG già trasparente (Retro): non toccare l'alpha
+    - is_transparent_bg=False → sfondo nero (Fronte): crea alpha dalla luminosità
     """
-    if img_bgra.shape[2] == 4:
-        # Ha già canale alpha: usa flood-fill sui bordi per pulire residui
-        alpha = img_bgra[:, :, 3].copy()
-        h, w  = alpha.shape
-
-        # Maschera flood-fill dai bordi
-        mask = np.zeros((h + 2, w + 2), np.uint8)
-        alpha_copy = alpha.copy()
-        cv2.floodFill(alpha_copy, mask, (0, 0), 0, loDiff=30, upDiff=30)
-        cv2.floodFill(alpha_copy, mask, (w-1, 0), 0, loDiff=30, upDiff=30)
-        cv2.floodFill(alpha_copy, mask, (0, h-1), 0, loDiff=30, upDiff=30)
-        cv2.floodFill(alpha_copy, mask, (w-1, h-1), 0, loDiff=30, upDiff=30)
-        img_bgra[:, :, 3] = alpha_copy
+    if is_transparent_bg:
+        # Il Retro ha già l'alpha corretto — non fare nulla
+        return img_bgra
     else:
-        # Sfondo nero: crea canale alpha basato sulla luminosità
-        gray  = cv2.cvtColor(img_bgra, cv2.COLOR_BGR2GRAY)
+        # Fronte: sfondo nero → crea alpha dalla luminosità
+        if img_bgra.shape[2] == 3:
+            img_bgra = cv2.cvtColor(img_bgra, cv2.COLOR_BGR2BGRA)
+
+        gray = cv2.cvtColor(img_bgra, cv2.COLOR_BGRA2GRAY)
         _, alpha = cv2.threshold(gray, 15, 255, cv2.THRESH_BINARY)
 
-        # Flood-fill dai bordi per non toccare le parti scure del medaglione
-        h, w  = gray.shape
-        mask  = np.zeros((h + 2, w + 2), np.uint8)
+        h, w = gray.shape
+        mask = np.zeros((h + 2, w + 2), np.uint8)
         alpha_fill = alpha.copy()
         cv2.floodFill(alpha_fill, mask, (0, 0),     0, loDiff=200, upDiff=200)
         cv2.floodFill(alpha_fill, mask, (w-1, 0),   0, loDiff=200, upDiff=200)
         cv2.floodFill(alpha_fill, mask, (0, h-1),   0, loDiff=200, upDiff=200)
         cv2.floodFill(alpha_fill, mask, (w-1, h-1), 0, loDiff=200, upDiff=200)
 
-        # Leggero blur sul bordo per antialiasing
         alpha_fill = cv2.GaussianBlur(alpha_fill, (3, 3), 0)
-        img_bgra   = cv2.cvtColor(img_bgra, cv2.COLOR_BGR2BGRA)
         img_bgra[:, :, 3] = alpha_fill
-
-    return img_bgra
+        return img_bgra
 
 
 # ─────────────────────────────────────────
 # CARICAMENTO E PREPARAZIONE IMMAGINI
 # ─────────────────────────────────────────
-def prepare_image(path):
+def prepare_image(path, is_transparent_bg=False):
     if not os.path.exists(path):
         print(f"❌ Errore: manca {path}")
         sys.exit()
@@ -80,28 +68,39 @@ def prepare_image(path):
         sys.exit()
 
     # Assicura 4 canali
-    if img.shape[2] == 3:
+    if img.ndim == 2:
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGRA)
+    elif img.shape[2] == 3:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
 
-    img = remove_background(img)
+    img = remove_background(img, is_transparent_bg=is_transparent_bg)
 
-    h, w      = img.shape[:2]
-    target_h  = int(height * 0.78)
-    ratio     = w / h
-    target_w  = int(target_h * ratio)
-    img       = cv2.resize(img, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
+    h, w     = img.shape[:2]
+    target_h = int(height * 0.78)
+    ratio    = w / h
+    target_w = int(target_h * ratio)
+    img      = cv2.resize(img, (target_w, target_h), interpolation=cv2.INTER_LANCZOS4)
     return img, target_w, target_h
 
 
-img_fronte, t_w, t_h = prepare_image(image_fronte_path)
-img_retro,  _,   _   = prepare_image(image_retro_path)
+print("📂 Caricamento immagini...")
+img_fronte, t_w, t_h = prepare_image(image_fronte_path, is_transparent_bg=False)
+img_retro,  _,   _   = prepare_image(image_retro_path,  is_transparent_bg=True)
+
+# ─────────────────────────────────────────
+# FIX: flip orizzontale del retro
+# Compensa lo specchiamento della prospettiva
+# ─────────────────────────────────────────
+img_retro = cv2.flip(img_retro, 1)
+
+print(f"✅ Fronte caricato: alpha max={img_fronte[:,:,3].max()}")
+print(f"✅ Retro  caricato: alpha max={img_retro[:,:,3].max()}")
 
 
 # ─────────────────────────────────────────
-# COMPOSITING: incolla BGRA su frame nero
+# COMPOSITING
 # ─────────────────────────────────────────
 def composite(frame, warped_bgra):
-    """Incolla l'immagine con alpha su frame nero."""
     bgr   = warped_bgra[:, :, :3].astype(np.float32)
     alpha = warped_bgra[:, :, 3:4].astype(np.float32) / 255.0
     frame = frame.astype(np.float32)
@@ -115,12 +114,12 @@ def composite(frame, warped_bgra):
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
 video  = cv2.VideoWriter(temp_video_avi, fourcc, fps, (width, height))
 
-print("🚀 Renderizzazione Medaglione PoeticaMente in corso...")
+print("🚀 Renderizzazione in corso...")
 
 for i in range(total_frames):
-    frame    = np.zeros((height, width, 3), dtype=np.uint8)   # sfondo nero
-    progress = i / total_frames
-    angolo_rad = np.radians(progress * (2 * 360))             # 2 giri in 20 sec
+    frame      = np.zeros((height, width, 3), dtype=np.uint8)
+    progress   = i / total_frames
+    angolo_rad = np.radians(progress * (2 * 360))   # 2 giri in 20 sec
 
     cos_a    = np.cos(angolo_rad)
     is_front = cos_a >= 0
@@ -133,17 +132,16 @@ for i in range(total_frames):
 
     src_pts = np.float32([[0,   0  ], [t_w, 0  ], [t_w, t_h], [0,   t_h]])
     dst_pts = np.float32([
-        [x_offset,              y_offset          + dist_p],
-        [x_offset + w_effettivo, y_offset          - dist_p],
-        [x_offset + w_effettivo, y_offset + t_h   + dist_p],
-        [x_offset,              y_offset + t_h    - dist_p],
+        [x_offset,               y_offset           + dist_p],
+        [x_offset + w_effettivo, y_offset           - dist_p],
+        [x_offset + w_effettivo, y_offset + t_h     + dist_p],
+        [x_offset,               y_offset + t_h     - dist_p],
     ])
 
     matrix = cv2.getPerspectiveTransform(src_pts, dst_pts)
     warped = cv2.warpPerspective(img_src, matrix, (width, height),
-                                  flags=cv2.INTER_LANCZOS4)
+                                 flags=cv2.INTER_LANCZOS4)
 
-    # Compositing con alpha
     frame = composite(frame, warped)
 
     # Riflesso dorato leggero
