@@ -91,7 +91,6 @@ img_retro,  _,   _   = prepare_image(image_retro_path,  is_transparent_bg=True)
 # FIX: flip orizzontale del retro
 # Compensa lo specchiamento della prospettiva
 # ─────────────────────────────────────────
-img_retro = cv2.flip(img_retro, 1)
 
 print(f"✅ Fronte caricato: alpha max={img_fronte[:,:,3].max()}")
 print(f"✅ Retro  caricato: alpha max={img_retro[:,:,3].max()}")
