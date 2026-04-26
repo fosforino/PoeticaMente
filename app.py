@@ -3,7 +3,7 @@ import os
 import base64
 from supabase import create_client
 import importlib
-from pagine_web import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio, AntropologicaMente
+from pagine_web import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio, AntropologaMente
 
 st.set_page_config(
     page_title="PoeticaMente",
@@ -11,8 +11,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio", "AntropologicaMente"]
 
 try:
     url = st.secrets["SUPABASE_URL"]
@@ -289,12 +287,12 @@ else:
         )
 
         menu = st.selectbox(
-            "📂 Navigazione",
-            ["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio"],
-            index=["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio"].index(
-                st.session_state.pagina
-            )
-        )
+    "📂 Navigazione",
+    ["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio", "AntropologaMente"],
+    index=["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio", "AntropologaMente"].index(
+        st.session_state.pagina
+    )
+)
         st.session_state.pagina = menu
 
         if menu == "Scrittoio":
@@ -327,6 +325,6 @@ else:
     elif menu == "Premio":
         importlib.reload(Premio)
         Premio.show()
-    elif menu == "AntropologicaMente":
-        importlib.reload(AntropologicaMente)
-        AntropologicaMente.show()    
+    elif menu == "AntropologaMente":
+        importlib.reload(AntropologaMente)
+        AntropologaMente.show()

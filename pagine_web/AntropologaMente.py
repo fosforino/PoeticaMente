@@ -187,52 +187,62 @@ ANTROPOLOGI = {
     "Claude Lévi-Strauss": {
         "opera": "Tristi Tropici",
         "testo": "Il mondo è cominciato senza l'uomo e finirà senza di lui. Le istituzioni, i costumi, gli usi che avrò passato la mia vita a catalogare non sono che un'effimera fioritura.",
-        "anni": "1908–2009"
+        "anni": "1908-2009"
     },
     "Margaret Mead": {
         "opera": "Coming of Age in Samoa",
         "testo": "Mai dubitare che un piccolo gruppo di cittadini pensanti e impegnati possa cambiare il mondo. In realtà, è l'unica cosa che lo abbia mai fatto.",
-        "anni": "1901–1978"
+        "anni": "1901-1978"
     },
     "Bronisław Malinowski": {
         "opera": "Argonauti del Pacifico Occidentale",
         "testo": "L'antropologia è lo studio dell'uomo che abbraccia la donna.",
-        "anni": "1884–1942"
+        "anni": "1884-1942"
     },
     "Franz Boas": {
         "opera": "La mente dell'uomo primitivo",
         "testo": "La civiltà non è qualcosa di assoluto, ma è relativa, e le nostre idee e concezioni sono vere solo nella misura in cui la nostra civiltà è valida.",
-        "anni": "1858–1942"
+        "anni": "1858-1942"
     },
     "Edward Tylor": {
         "opera": "Cultura Primitiva",
         "testo": "La cultura è quell'insieme complesso che include conoscenza, credenza, arte, morale, legge, costume e ogni altra capacità acquisita dall'uomo come membro della società.",
-        "anni": "1832–1917"
+        "anni": "1832-1917"
     },
     "Ruth Benedict": {
         "opera": "Modelli di Cultura",
         "testo": "Il compito dell'antropologia è quello di rendere il mondo sicuro per le differenze umane.",
-        "anni": "1887–1948"
+        "anni": "1887-1948"
     },
     "Clifford Geertz": {
         "opera": "Interpretazione di Culture",
         "testo": "L'uomo è un animale sospeso nelle reti di significato che lui stesso ha tessuto. La cultura è quella rete.",
-        "anni": "1926–2006"
+        "anni": "1926-2006"
     },
     "Marcel Mauss": {
         "opera": "Saggio sul Dono",
         "testo": "Il dono non è mai gratuito. I presenti creano aspettative di reciprocità.",
-        "anni": "1872–1950"
+        "anni": "1872-1950"
+    },
+    "Ernesto De Martino": {
+        "opera": "Sud e Magia",
+        "testo": "Il folklore non è un museo di curiosità arcaiche, ma una civiltà dello spirito che risponde a bisogni profondi dell'esistenza umana.",
+        "anni": "1908-1965"
     },
     "Mary Douglas": {
         "opera": "Purezza e Pericolo",
         "testo": "Lo sporco è materia fuori posto. Dove c'è sporco c'è sistema.",
-        "anni": "1921–2007"
+        "anni": "1921-2007"
     },
     "Victor Turner": {
         "opera": "Il Processo Rituale",
         "testo": "Nei riti di passaggio, l'uomo si spoglia della sua identità per rinascere trasformato.",
-        "anni": "1920–1983"
+        "anni": "1920-1983"
+    },
+    "Vincenzo Esposito": {
+        "opera": "Comunità e Identità",
+        "testo": "L'identità di un popolo non si conserva nei libri, ma nelle mani di chi lavora, nella voce di chi canta, nel silenzio di chi ricorda.",
+        "anni": "XX sec."
     },
 }
 
