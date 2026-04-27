@@ -3,7 +3,7 @@ import os
 import base64
 from supabase import create_client
 import importlib
-from pagine_web import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, Premio, AntropologaMente
+from pagine_web import Home, Scrittoio, Bacheca, FilosofaMente, Archivio, AntropologaMente, Premio
 
 st.set_page_config(
     page_title="PoeticaMente",
@@ -211,7 +211,7 @@ if not st.session_state.authenticated:
 
     st.markdown("<div style='height: 62vh'></div>", unsafe_allow_html=True)
 
-    col_vuota_sx, col_login, col_vuota_dx = st.columns([0.08, 0.22, 0.70])
+    col_vuota_sx, col_login, col_vuota_dx = st.columns([0.03, 0.22, 0.75])
     with col_login:
         u = st.text_input("L'Identità", placeholder="Chi bussa?", key="input_u")
         p = st.text_input("La Chiave", type="password", placeholder="La firma...", key="input_p")
@@ -288,8 +288,8 @@ else:
 
         menu = st.selectbox(
     "📂 Navigazione",
-    ["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio", "AntropologaMente"],
-    index=["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "Premio", "AntropologaMente"].index(
+    ["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "AntropologaMente", "Premio"],
+    index=["Home", "Scrittoio", "Bacheca", "FilosofaMente", "Archivio", "AntropologaMente", "Premio"].index(
         st.session_state.pagina
     )
 )
@@ -322,9 +322,9 @@ else:
     elif menu == "Archivio":
         importlib.reload(Archivio)
         Archivio.show()
-    elif menu == "Premio":
-        importlib.reload(Premio)
-        Premio.show()
     elif menu == "AntropologaMente":
         importlib.reload(AntropologaMente)
         AntropologaMente.show()
+    elif menu == "Premio":
+        importlib.reload(Premio)
+        Premio.show()

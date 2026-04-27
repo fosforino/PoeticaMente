@@ -7,6 +7,7 @@ import urllib.parse
 import urllib.request
 import json
 
+
 # =========================
 # FUNZIONI AUSILIARIE
 # =========================
@@ -17,13 +18,16 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
+
 def genera_pdf(titolo, autore, testo):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Times", 'B', 24)
+
     t_enc   = titolo.encode('latin-1', 'replace').decode('latin-1')
     a_enc   = f"Scritto da: {autore}".encode('latin-1', 'replace').decode('latin-1')
     txt_enc = testo.encode('latin-1', 'replace').decode('latin-1')
+
     pdf.cell(0, 20, t_enc, ln=True, align='C')
     pdf.ln(10)
     pdf.set_font("Times", 'I', 12)
@@ -31,7 +35,12 @@ def genera_pdf(titolo, autore, testo):
     pdf.ln(10)
     pdf.set_font("Times", size=14)
     pdf.multi_cell(0, 10, txt_enc)
-    return bytes(pdf.output(dest='S'))
+
+    output = pdf.output(dest='S')
+    if isinstance(output, (bytes, bytearray)):
+        return bytes(output)
+    return output.encode('latin-1')
+
 
 def cerca_wikipedia(termine):
     try:
@@ -46,13 +55,16 @@ def cerca_wikipedia(termine):
     except Exception:
         return "Nessun risultato trovato o errore di connessione.", ""
 
+
 def cerca_immagini_unsplash(termine):
     termine_enc = urllib.parse.quote(termine)
     return f"https://unsplash.com/s/photos/{termine_enc}"
 
+
 def cerca_immagini_pixabay(termine):
     termine_enc = urllib.parse.quote(termine)
     return f"https://pixabay.com/it/images/search/{termine_enc}/"
+
 
 def apply_style():
     img_base64 = get_base64_image("assets/Fronte_3d.png")
@@ -68,7 +80,7 @@ def apply_style():
             width: 70vw; opacity:0.05; filter: grayscale(100%);
             z-index:-1; pointer-events:none;
         }}
-        .titolo-antropologicaMente {{
+        .titolo-antropologaMente {{
             font-family: 'Cinzel', serif;
             text-align: center;
             color: #2c1a0e;
@@ -77,7 +89,7 @@ def apply_style():
             margin-bottom: 8px;
             text-transform: uppercase;
         }}
-        .sottotitolo-antropologicaMente {{
+        .sottotitolo-antropologaMente {{
             font-family: 'EB Garamond', serif;
             text-align: center;
             color: #6d4c2a;
@@ -180,9 +192,11 @@ def apply_style():
         {img_html}
     """, unsafe_allow_html=True)
 
+
 # =========================
 # ANTROPOLOGI
 # =========================
+
 ANTROPOLOGI = {
     "Claude Lévi-Strauss": {
         "opera": "Tristi Tropici",
@@ -246,22 +260,22 @@ ANTROPOLOGI = {
     },
 }
 
-# Siti esterni di antropologia
 SITI_ANTROPOLOGIA = [
-    {"nome": "🌍 Wenner-Gren Foundation", "url": "https://www.wennergren.org"},
+    {"nome": "🌍 Wenner-Gren Foundation",          "url": "https://www.wennergren.org"},
     {"nome": "🏛️ American Anthropological Assoc.", "url": "https://www.americananthro.org"},
     {"nome": "📚 SIAM - Società Italiana Antropologia", "url": "https://www.siamantropologia.it"},
     {"nome": "🔬 Royal Anthropological Institute", "url": "https://www.therai.org.uk"},
-    {"nome": "📖 AnthroSource (riviste)", "url": "https://anthrosource.onlinelibrary.wiley.com"},
+    {"nome": "📖 AnthroSource (riviste)",           "url": "https://anthrosource.onlinelibrary.wiley.com"},
 ]
+
 
 # =========================
 # MAIN SHOW()
 # =========================
+
 def show():
     apply_style()
 
-    # --- Connessione Supabase ---
     url = st.secrets["SUPABASE_URL"]
     key = st.secrets["SUPABASE_KEY"]
     supabase = create_client(url, key)
@@ -272,28 +286,18 @@ def show():
 
     nome_poeta = st.session_state.utente
 
-    st.markdown("<div class='titolo-antropologicaMente'>AntropologicaMente</div>", unsafe_allow_html=True)
-    st.markdown("<div class='sottotitolo-antropologicaMente'>L'uomo che studia l'uomo</div>", unsafe_allow_html=True)
+    st.markdown("<div class='titolo-antropologaMente'>AntropologaMente</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sottotitolo-antropologaMente'>L'uomo che studia l'uomo</div>", unsafe_allow_html=True)
     st.markdown("---")
 
-    # ─────────────────────────────────────────
-    # LAYOUT: colonna principale | colonna risorse
-    # ─────────────────────────────────────────
     col_main, col_res = st.columns([1.7, 1])
 
-    # ══════════════════════════════
-    # COLONNA SINISTRA
-    # ══════════════════════════════
     with col_main:
-
-        # Selezione antropologo
         nomi = ["Scegli un Maestro..."] + list(ANTROPOLOGI.keys())
         selezione = st.selectbox("🏺 Quale voce vuoi evocare?", options=nomi)
 
         if selezione != "Scegli un Maestro...":
             dati = ANTROPOLOGI[selezione]
-
-            # Citazione
             st.markdown(f"""
                 <div class="riquadro-antropologo">
                     <div class="nome-antropologo">{selezione}</div>
@@ -301,7 +305,6 @@ def show():
                     <div class="testo-antropologo">"{dati['testo']}"</div>
                 </div>
             """, unsafe_allow_html=True)
-
         else:
             st.markdown("""
                 <div style='text-align:center; margin-top:40px; font-family: EB Garamond, serif;
@@ -312,15 +315,12 @@ def show():
             """, unsafe_allow_html=True)
 
         st.markdown("---")
-
-        # ── AREA DI SCRITTURA (sempre visibile) ──
         st.markdown("##### ✍️ Il tuo pensiero")
 
-        # Recupero opere esistenti da Supabase
         try:
             res = supabase.table("Opere").select("*").eq("autore", nome_poeta).eq("categoria", "Antropologia").execute()
             opere = res.data if res.data else []
-        except:
+        except Exception:
             opere = []
 
         opere_lista = ["✨ Nuova Opera"] + [o['titolo'] for o in opere]
@@ -330,6 +330,11 @@ def show():
         v_titolo = opera_corrente['titolo'] if opera_corrente else ""
         v_testo  = opera_corrente['versi']  if opera_corrente else ""
         v_bg     = opera_corrente.get('sfondo', "") if opera_corrente else ""
+
+        # Sincronizza il session_state dello sfondo con il valore dell'opera caricata
+        if st.session_state.get("_ultima_opera_caricata") != opera_scelta:
+            st.session_state["_ultima_opera_caricata"] = opera_scelta
+            st.session_state["antro_sfondo_url"] = v_bg
 
         col_t, col_c = st.columns([2, 1])
         with col_t:
@@ -355,7 +360,6 @@ def show():
 
         st.markdown("---")
 
-        # Bottoni
         b1, b2, b3 = st.columns(3)
 
         with b1:
@@ -367,7 +371,7 @@ def show():
                         "categoria": categoria,
                         "autore": nome_poeta,
                         "pubblica": pubblica,
-                        "sfondo": st.session_state.get("antro_sfondo_url", v_bg)
+                        "sfondo": st.session_state.get("antro_sfondo_url") or v_bg
                     }
                     if opera_corrente:
                         supabase.table("Opere").update(dati_opera).eq("id", opera_corrente['id']).execute()
@@ -381,10 +385,12 @@ def show():
 
         with b2:
             if titolo and testo:
-                pdf_data = genera_pdf(titolo, nome_poeta, testo)
+                pdf_output = genera_pdf(titolo, nome_poeta, testo)
                 st.download_button(
-                    "🖨️ Scarica PDF", pdf_data,
-                    f"{titolo}.pdf", "application/pdf",
+                    label="🖨️ Scarica PDF",
+                    data=bytes(pdf_output),
+                    file_name=f"{titolo}.pdf",
+                    mime="application/pdf",
                     use_container_width=True,
                     key="antro_pdf"
                 )
@@ -400,12 +406,7 @@ def show():
             else:
                 st.button("🔥 Brucia", disabled=True, use_container_width=True, key="antro_del_dis")
 
-    # ══════════════════════════════
-    # COLONNA DESTRA — RISORSE
-    # ══════════════════════════════
     with col_res:
-
-        # ── PANNELLO WIKIPEDIA ──
         with st.expander("📖 Cerca su Wikipedia", expanded=False):
             st.markdown("<div class='etichetta-sezione'>Cerca un termine</div>", unsafe_allow_html=True)
             default_wiki = selezione if selezione != "Scegli un Maestro..." else ""
@@ -440,7 +441,6 @@ def show():
                     st.session_state["antro_wiki_url"] = ""
                     st.rerun()
 
-        # ── PANNELLO SITI ANTROPOLOGIA ──
         with st.expander("🌍 Risorse di Antropologia", expanded=False):
             st.markdown("<div class='etichetta-sezione'>Siti e Istituzioni</div>", unsafe_allow_html=True)
             for sito in SITI_ANTROPOLOGIA:
@@ -457,7 +457,6 @@ def show():
                     unsafe_allow_html=True
                 )
 
-        # ── PANNELLO SFONDO ──
         with st.expander("🖼️ Sfondo dell'Opera", expanded=False):
             st.markdown("<div class='etichetta-sezione'>Cerca ispirazione visiva</div>", unsafe_allow_html=True)
             termine_img = st.text_input(
@@ -483,9 +482,16 @@ def show():
                 label_visibility="collapsed"
             )
             if bg_url and bg_url.startswith("http"):
-                st.image(bg_url, caption="Anteprima sfondo", use_container_width=True)
+                estensioni_valide = ('.jpg', '.jpeg', '.png', '.webp', '.gif')
+                url_pulito = bg_url.split('?')[0].lower()
+                if any(url_pulito.endswith(ext) for ext in estensioni_valide):
+                    st.image(bg_url, caption="Anteprima sfondo", use_container_width=True)
+                else:
+                    st.warning(
+                        "⚠️ Usa il link diretto all'immagine (deve finire con .jpg, .png ecc.).\n\n"
+                        "Su **Pixabay/Unsplash**: clicca sull'immagine → tasto destro → *Copia indirizzo immagine*."
+                    )
 
-        # ── PANNELLO CONTEGGIO ──
         with st.expander("📊 Conteggio Opera", expanded=False):
             if testo:
                 parole    = len(testo.split())
