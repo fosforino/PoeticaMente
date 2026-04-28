@@ -226,8 +226,10 @@ def show():
             if titolo and contenuto:
                 pdf_data = genera_pdf(titolo, categoria, contenuto, nome_poeta)
                 st.download_button(
-                    "🖨️ Scarica PDF", pdf_data,
-                    f"{titolo}.pdf", "application/pdf",
+                    "🖨️ Scarica PDF", 
+                    bytes(pdf_data),  # Questa è la correzione fondamentale
+                    f"{titolo}.pdf", 
+                    "application/pdf",
                     use_container_width=True
                 )
             else:

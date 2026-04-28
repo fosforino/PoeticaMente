@@ -212,9 +212,6 @@ def show():
 
     col_main, col_res = st.columns([1.7, 1])
 
-    # ══════════════════════════════
-    # COLONNA SINISTRA — FILOSOFO + SCRITTURA
-    # ══════════════════════════════
     with col_main:
         nomi = ["Scegli una Scintilla..."] + list(FILOSOFI.keys())
         selezione = st.selectbox("✨ Quale anima vuoi consultare?", options=nomi)
@@ -277,12 +274,7 @@ def show():
                 </div>
             """, unsafe_allow_html=True)
 
-    # ══════════════════════════════
-    # COLONNA DESTRA — RISORSE
-    # ══════════════════════════════
     with col_res:
-
-        # ── PANNELLO WIKIPEDIA ──
         with st.expander("📖 Approfondisci su Wikipedia", expanded=False):
             st.markdown("<div class='etichetta-sezione'>Cerca un termine</div>", unsafe_allow_html=True)
             default_wiki = selezione if selezione != "Scegli una Scintilla..." else ""
@@ -317,7 +309,6 @@ def show():
                     st.session_state["filo_wiki_url"] = ""
                     st.rerun()
 
-        # ── PANNELLO ACCESSO RAPIDO ──
         with st.expander("🏛️ Accesso rapido ai Maestri", expanded=False):
             st.markdown("<div class='etichetta-sezione'>Cerca direttamente</div>", unsafe_allow_html=True)
             for nome in list(FILOSOFI.keys())[:5]:
@@ -327,17 +318,30 @@ def show():
                     unsafe_allow_html=True
                 )
 
-        # ── PANNELLO ATMOSFERA ──
+        # ── PANNELLO ATMOSFERA (Modificato con link esterni) ──
         with st.expander("🎨 Personalizza Atmosfera", expanded=False):
             st.markdown("<div class='etichetta-sezione'>Immagine di sfondo</div>", unsafe_allow_html=True)
             uploaded_file = st.file_uploader(
                 "Carica un'immagine", type=['png', 'jpg', 'jpeg'],
                 key="filo_uploader"
             )
+            
+            st.markdown("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
+            st.markdown("<div class='etichetta-sezione'>Oppure incolla un URL</div>", unsafe_allow_html=True)
+            
+            # Link a Pixabay e Unsplash in due colonne
+            cl1, cl2 = st.columns(2)
+            with cl1:
+                st.markdown("[🖼️ Pixabay](https://pixabay.com/it/)", unsafe_allow_html=True)
+            with cl2:
+                st.markdown("[📸 Unsplash](https://unsplash.com/it)", unsafe_allow_html=True)
+            
             link_image = st.text_input(
-                "Oppure incolla un URL", placeholder="https://...",
-                key="filo_bg_url"
+                "URL Immagine", placeholder="https://...",
+                key="filo_bg_url",
+                label_visibility="collapsed"
             )
+            
             if uploaded_file:
                 st.image(uploaded_file, caption="Anteprima", use_container_width=True)
             elif link_image and link_image.startswith("http"):

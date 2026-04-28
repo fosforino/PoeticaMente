@@ -263,7 +263,7 @@ ANTROPOLOGI = {
 SITI_ANTROPOLOGIA = [
     {"nome": "🌍 Wenner-Gren Foundation",          "url": "https://www.wennergren.org"},
     {"nome": "🏛️ American Anthropological Assoc.", "url": "https://www.americananthro.org"},
-    {"nome": "📚 SIAM - Società Italiana Antropologia", "url": "https://www.siamantropologia.it"},
+    {"nome": "📚 SIAM - Società Italiana Antropologia", "url": "https://www.antropologiaetnologia.it/"},
     {"nome": "🔬 Royal Anthropological Institute", "url": "https://www.therai.org.uk"},
     {"nome": "📖 AnthroSource (riviste)",           "url": "https://anthrosource.onlinelibrary.wiley.com"},
 ]

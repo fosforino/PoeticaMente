@@ -116,35 +116,54 @@ video  = cv2.VideoWriter(temp_video_avi, fourcc, fps, (width, height))
 print("🚀 Renderizzazione in corso...")
 
 for i in range(total_frames):
-    frame      = np.zeros((height, width, 3), dtype=np.uint8)
-    progress   = i / total_frames
-    angolo_rad = np.radians(progress * (2 * 360))   # 2 giri in 20 sec
+    frame = np.zeros((height, width, 3), dtype=np.uint8)
+    progress = i / total_frames
+    angolo_rad = np.radians(progress * (2 * 360)) 
 
-    cos_a    = np.cos(angolo_rad)
+    cos_a = np.cos(angolo_rad)
+    sin_a = np.sin(angolo_rad) # Ci serve per l'effetto parallasse
     is_front = cos_a >= 0
-    img_src  = img_fronte if is_front else img_retro
+    img_src = img_fronte if is_front else img_retro
 
     w_effettivo = max(int(t_w * abs(cos_a)), 1)
-    x_offset    = (width  - w_effettivo) / 2
-    y_offset    = (height - t_h)         / 2
-    dist_p      = abs(np.sin(angolo_rad)) * 140
+    x_offset = (width - w_effettivo) / 2
+    y_offset = (height - t_h) / 2
+    
+    # --- EFFETTO 3D: DISTORSIONE PROSPETTICA ---
+    # Aumentiamo dist_p per un effetto grandangolo più forte
+    dist_p = abs(sin_a) * 160 
 
-    src_pts = np.float32([[0,   0  ], [t_w, 0  ], [t_w, t_h], [0,   t_h]])
     dst_pts = np.float32([
-        [x_offset,               y_offset           + dist_p],
-        [x_offset + w_effettivo, y_offset           - dist_p],
-        [x_offset + w_effettivo, y_offset + t_h     + dist_p],
-        [x_offset,               y_offset + t_h     - dist_p],
+        [x_offset,               y_offset + dist_p],
+        [x_offset + w_effettivo, y_offset - dist_p],
+        [x_offset + w_effettivo, y_offset + t_h + dist_p],
+        [x_offset,               y_offset + t_h - dist_p],
     ])
 
+    # --- AGGIUNTA OMBRA PORTATA (3D FEEL) ---
+    shadow_offset = 30
+    dst_pts_shadow = dst_pts + [shadow_offset, shadow_offset]
+    matrix_s = cv2.getPerspectiveTransform(src_pts, dst_pts_shadow)
+    shadow_warped = cv2.warpPerspective(img_src, matrix_s, (width, height))
+    # Rendiamo l'ombra nera e sfocata
+    shadow_mask = (shadow_warped[:,:,3] > 0).astype(np.uint8) * 100
+    shadow_img = cv2.merge([shadow_mask, shadow_mask, shadow_mask])
+    shadow_img = cv2.GaussianBlur(shadow_img, (51, 51), 0)
+    frame = cv2.subtract(frame, shadow_img) # Applica l'ombra sul fondo nero
+
+    # --- RENDER MEDAGLIA ---
     matrix = cv2.getPerspectiveTransform(src_pts, dst_pts)
-    warped = cv2.warpPerspective(img_src, matrix, (width, height),
-                                 flags=cv2.INTER_LANCZOS4)
+    warped = cv2.warpPerspective(img_src, matrix, (width, height), flags=cv2.INTER_LANCZOS4)
+    
+    # --- OMBREGGIATURA DINAMICA (SHADING) ---
+    # Scuriamo la medaglia quando ruota di lato
+    shading_factor = 0.5 + 0.5 * abs(cos_a) 
+    warped[:,:,:3] = (warped[:,:,:3] * shading_factor).astype(np.uint8)
 
     frame = composite(frame, warped)
 
-    # Riflesso dorato leggero
-    lx         = int((i % 60) / 60 * width * 1.5) - 300
+    # Il tuo riflesso dorato (ottimo tocco)
+    lx = int((i % 60) / 60 * width * 1.5) - 300
     light_mask = np.zeros((height, width, 3), dtype=np.uint8)
     cv2.line(light_mask, (lx, 0), (lx + 150, height), (70, 60, 20), 40)
     cv2.GaussianBlur(light_mask, (81, 81), 0, light_mask)

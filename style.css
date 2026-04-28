@@ -42,13 +42,45 @@ html, body {
     width: 100% !important;
 }
 
-/* Assicura che il contenuto principale non abbia bordi bianchi */
 [data-testid="stMain"] {
     background-color: transparent !important;
 }
 
 section.main {
     background-color: transparent !important;
+}
+
+/* ----------------------------------------- */
+/* SIDEBAR — toggle sempre visibile          */
+/* ----------------------------------------- */
+section[data-testid="stSidebar"] {
+    z-index: 1000 !important;
+    background-color: #f5e6cc !important;
+    border-right: 1px solid #d2b48c !important;
+}
+
+/* Il pulsante freccia che fa riapparire la sidebar */
+div[data-testid="stSidebarCollapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+}
+
+div[data-testid="stSidebarCollapsedControl"] button {
+    background-color: #f5e6cc !important;
+    border: 1px solid #d2b48c !important;
+    border-radius: 0 6px 6px 0 !important;
+    color: #5d4037 !important;
+}
+
+div[data-testid="stSidebarCollapsedControl"] button:hover {
+    background-color: #e8d5b0 !important;
+}
+
+div[data-testid="stSidebarCollapsedControl"] svg {
+    fill: #5d4037 !important;
 }
 
 /* ----------------------------------------- */
@@ -152,13 +184,8 @@ div.stDownloadButton > button:hover:not(:disabled) {
 }
 
 /* ----------------------------------------- */
-/* SIDEBAR                                   */
+/* SIDEBAR — stile contenuto                 */
 /* ----------------------------------------- */
-[data-testid="stSidebar"] {
-    background-color: #f5e6cc !important;
-    border-right: 1px solid #d2b48c !important;
-}
-
 [data-testid="stSidebar"] .stSelectbox label {
     font-family: 'Cinzel', serif !important;
     color: #432818 !important;
@@ -202,10 +229,4 @@ div.stDownloadButton > button:hover:not(:disabled) {
     filter: sepia(0.5) brightness(1.1);
 }
 
-/* ----------------------------------------- */
-/* PULIZIA STREAMLIT                         */
-/* ----------------------------------------- */
-header, footer,
-[data-testid="stHeader"] {
-    display: none !important;
-}
+

@@ -10,8 +10,35 @@ def get_base64_image(path):
     return None
 
 def show():
-    # 1. Caricamento Medaglione come Filigrana (Background)
-    img_b64 = get_base64_image("Fronte.png")
+    # CSS specifico per la Home (solo ciò che non è già in style.css)
+    st.markdown("""
+        <style>
+        .medaglione-wrapper-home {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .medaglione-img-home {
+            width: 60vw;
+            filter: sepia(0.5) contrast(1.1);
+        }
+
+        .stButton > button {
+            border-radius: 8px !important;
+            padding: 10px 24px !important;
+            font-family: 'EB Garamond', serif !important;
+            transition: all 0.3s !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # 1. Caricamento Medaglione (Sfondo)
+    img_b64 = get_base64_image("assets/Fronte.png")
     if img_b64:
         st.markdown(f"""
             <div class="medaglione-wrapper-home">
@@ -19,15 +46,14 @@ def show():
             </div>
         """, unsafe_allow_html=True)
 
-    # 2. Intestazione Principale
+    # 2. Intestazione
     st.markdown("<h1>PoeticaMente</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; font-family: \"EB Garamond\", serif; font-style: italic; font-size: 1.4rem; color: #8d6e63; margin-bottom: 45px;'>Dimora sacra per l'arte del verso</p>", unsafe_allow_html=True)
 
-    # 3. Layout a due colonne
+    # 3. Colonne
     col1, col2 = st.columns([1.8, 1], gap="large")
 
     with col1:
-        # Testo introduttivo
         st.markdown("""
             <div style='font-family: "EB Garamond", serif; font-size: 1.4rem; line-height: 1.6; text-align: justify; margin-bottom: 35px; color: #432818;'>
                 PoeticaMente è uno spazio dedicato a chi trasforma il silenzio in rime. 
@@ -36,7 +62,6 @@ def show():
             </div>
         """, unsafe_allow_html=True)
 
-        # Voci non cliccabili (solo testo descrittivo)
         st.markdown(
             "<div style='font-family: \"EB Garamond\", serif; font-size: 1.25rem; color: #432818; line-height: 2;'>"
             "<p>&#128393; <b>Lo Scrittoio</b><br>"
@@ -50,7 +75,6 @@ def show():
         )
 
     with col2:
-        # Card laterale del Codice
         st.markdown("""
             <div class="rules-card">
                 <h3 style="font-size: 1.7rem; margin-top: 0; color: #432818; font-family: 'Cinzel', serif;">IL CODICE DEL POETA</h3>
@@ -63,7 +87,6 @@ def show():
             </div>
         """, unsafe_allow_html=True)
 
-        # Messaggio di benvenuto utente
         if st.session_state.get('utente'):
             st.markdown(f"""
                 <div style="margin-top: 30px; padding: 15px; border-left: 3px solid #bb9457; font-style: italic; color: #5d4037;">
