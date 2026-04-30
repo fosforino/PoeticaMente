@@ -1,232 +1,93 @@
-/* ========================================= */
-/* style.css - EDIZIONE COMPLETA             */
-/* ========================================= */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
+/* ============================================================
+   1. PULIZIA E ALLARGAMENTO LAYOUT (FULL WIDTH)
+   ============================================================ */
 
-/* ----------------------------------------- */
-/* SFONDO APP — copre tutto lo schermo       */
-/* ----------------------------------------- */
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    min-height: 100vh !important;
-    background-color: #fdf5e6 !important;
-    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
+/* Nasconde sidebar e controlli nativi */
+[data-testid="stSidebar"], 
+[data-testid="stSidebarCollapsedControl"],
+button[aria-label="Close sidebar"] {
+    display: none !important;
 }
 
-/* Wrapper intermedi Streamlit che causano i bordi bianchi */
-#root,
-.stApp > div,
-[data-testid="stAppViewContainer"] > div,
-[data-testid="stAppViewContainer"] > section,
-[data-testid="stBottom"],
-[data-testid="stMainBlockContainer"],
+/* Nasconde header e footer */
+header, [data-testid="stHeader"], footer {
+    display: none !important;
+}
+
+/* ALLUNGA IL BOX: Porta la larghezza quasi al 100% dello schermo */
 .block-container {
-    background-color: transparent !important;
+    padding-top: 2rem !important;
+    max-width: 98vw !important; /* Quasi tutta la larghezza del browser */
+    padding-left: 1vw !important;
+    padding-right: 1vw !important;
 }
 
-.stApp {
-    background-color: #fdf5e6 !important;
-    background-image: url("https://www.transparenttextures.com/patterns/handmade-paper.png") !important;
-    min-height: 100vh !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
+/* ============================================================
+   2. STILE PER I BOTTONI DEL MENU (NAVIGAZIONE)
+   ============================================================ */
 
-[data-testid="stAppViewContainer"] {
-    background-color: transparent !important;
-    min-height: 100vh !important;
-    width: 100% !important;
-}
-
-[data-testid="stMain"] {
-    background-color: transparent !important;
-}
-
-section.main {
-    background-color: transparent !important;
-}
-
-/* ----------------------------------------- */
-/* SIDEBAR — toggle sempre visibile          */
-/* ----------------------------------------- */
-section[data-testid="stSidebar"] {
-    z-index: 1000 !important;
-    background-color: #f5e6cc !important;
-    border-right: 1px solid #d2b48c !important;
-}
-
-/* Il pulsante freccia che fa riapparire la sidebar */
-div[data-testid="stSidebarCollapsedControl"] {
+/* Riduce lo spazio tra le colonne per sfruttare l'allungamento */
+[data-testid="column"] {
+    padding: 0 3px !important;
     display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    z-index: 9999 !important;
-    pointer-events: auto !important;
+    justify-content: center !important;
 }
 
-div[data-testid="stSidebarCollapsedControl"] button {
-    background-color: #f5e6cc !important;
-    border: 1px solid #d2b48c !important;
-    border-radius: 0 6px 6px 0 !important;
-    color: #5d4037 !important;
-}
-
-div[data-testid="stSidebarCollapsedControl"] button:hover {
-    background-color: #e8d5b0 !important;
-}
-
-div[data-testid="stSidebarCollapsedControl"] svg {
-    fill: #5d4037 !important;
-}
-
-/* ----------------------------------------- */
-/* TITOLI                                    */
-/* ----------------------------------------- */
-.stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
-    font-family: 'Cinzel', serif !important;
-    color: #432818 !important;
-    text-align: center !important;
-    letter-spacing: 0.15em !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1) !important;
-    font-weight: 700 !important;
-    margin-top: 1rem !important;
-}
-
-[data-testid="stWidgetLabel"] p {
-    font-family: 'Cinzel', serif !important;
-    font-size: 1.1rem !important;
-    font-weight: 700 !important;
-    color: #5d4037 !important;
-    letter-spacing: 0.05em !important;
-}
-
-/* ----------------------------------------- */
-/* BOTTONI ATTIVI - BASE                     */
-/* ----------------------------------------- */
-div.stButton > button,
-div.stDownloadButton > button {
-    font-family: 'Cinzel', serif !important;
-    font-size: 1rem !important;
-    font-weight: bold !important;
-    letter-spacing: 0.1em !important;
-    border-radius: 6px !important;
-    padding: 0.6em 1.2em !important;
+div.stButton > button {
     width: 100% !important;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-    border: 1.5px solid #bb9457 !important;
-    background: #ffffff !important;
-    color: #432818 !important;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15) !important;
+    font-size: 0.85rem !important; /* Font più grande grazie al box allungato */
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    white-space: nowrap !important;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+    border: 1px solid #bb9457 !important;
+    background-color: #f5e6cc !important;
+    color: #5d4037 !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
 }
 
-/* Colonna 1 → Verde (Custodisci/Salva) */
-div[data-testid="column"]:nth-of-type(1) div.stButton > button:not(:disabled) {
-    background: #2e7d32 !important;
-    color: #ffffff !important;
-    border-color: #1b5e20 !important;
-    box-shadow: 0 4px 0 #1b5e20 !important;
+div.stButton > button:hover {
+    background-color: #bb9457 !important;
+    color: #f5e6cc !important;
 }
 
-/* Colonna 2 → Oro manoscritto (Scarica PDF) */
-div[data-testid="column"]:nth-of-type(2) div.stDownloadButton > button {
-    background: #8B6914 !important;
-    color: #ffffff !important;
-    border-color: #5c4409 !important;
-    box-shadow: 0 4px 0 #5c4409 !important;
-}
+/* ============================================================
+   3. STILE PER I LINK RISORSA (Unsplash, Pixabay)
+   ============================================================ */
 
-/* Colonna 3 → Rosso scuro (Brucia) */
-div[data-testid="column"]:nth-of-type(3) div.stButton > button:not(:disabled) {
-    background: #8e0000 !important;
-    color: #ffffff !important;
-    border-color: #4a0000 !important;
-    box-shadow: 0 4px 0 #4a0000 !important;
-}
-
-/* ----------------------------------------- */
-/* BOTTONI DISABILITATI - SEMPRE VISIBILI    */
-/* ----------------------------------------- */
-div.stButton > button:disabled,
-div.stDownloadButton > button:disabled {
-    background: #c8b99a !important;
-    color: #5a3e2b !important;
-    border: 1.5px solid #a08060 !important;
-    box-shadow: none !important;
-    opacity: 1 !important;
-    cursor: not-allowed !important;
-}
-
-/* ----------------------------------------- */
-/* HOVER                                     */
-/* ----------------------------------------- */
-div.stButton > button:hover:not(:disabled),
-div.stDownloadButton > button:hover:not(:disabled) {
-    transform: translateY(-2px) !important;
-    opacity: 0.92 !important;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2) !important;
-}
-
-/* ----------------------------------------- */
-/* INPUT E TEXTAREA                          */
-/* ----------------------------------------- */
-[data-testid="stTextInput"] input,
-[data-testid="stTextArea"] textarea {
-    background: rgba(255, 251, 240, 0.9) !important;
-    color: #1a1008 !important;
-    border: 1.5px solid #bb9457 !important;
-    font-family: 'EB Garamond', serif !important;
-    font-size: 1.1rem !important;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05) !important;
-}
-
-/* ----------------------------------------- */
-/* SIDEBAR — stile contenuto                 */
-/* ----------------------------------------- */
-[data-testid="stSidebar"] .stSelectbox label {
+.link-risorsa {
+    display: inline-block !important;
+    margin: 10px 5px !important;
+    padding: 10px 20px !important;
+    background-color: #1a1008 !important; 
+    color: #c9a227 !important; 
+    border: 1px solid #c9a227 !important;
+    border-radius: 6px !important;
     font-family: 'Cinzel', serif !important;
-    color: #432818 !important;
+    font-size: 0.8rem !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
 }
 
-/* ----------------------------------------- */
-/* MEDAGLIONE                                */
-/* ----------------------------------------- */
-.medaglione-wrapper {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 0;
-    pointer-events: none;
+/* ============================================================
+   4. STILE PER IL MENU DI NAVIGAZIONE (Expander Allungato)
+   ============================================================ */
+
+.stExpander {
+    border: 1px solid #bb9457 !important;
+    background-color: rgba(245, 230, 204, 0.9) !important;
+    border-radius: 8px !important;
+    width: 100% !important; /* Forza l'expander a usare tutto lo spazio della block-container */
 }
 
-.medaglione-cerchio {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 3px solid rgba(212, 175, 55, 0.5);
-    box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.1);
+.stExpander summary {
+    font-family: 'Cinzel', serif !important;
+    color: #5d4037 !important;
 }
-
-.medaglione-cerchio img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    opacity: 0.15 !important;
-    filter: sepia(0.5) brightness(1.1);
-}
-
-
